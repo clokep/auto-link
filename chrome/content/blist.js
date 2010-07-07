@@ -91,13 +91,14 @@ var autoLink = {
 
 				let conversation = aObject._conv; // http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
 				for each (var rule in rules) {
-					if ((rule.protocols.length == 0)
-							|| (conversation.account.protocol.name in rule.protocols)
+					if (((rule.protocols.length == 0)
+							|| (conversation.account.protocol.name in rule.protocols))
 						&& ((rule.users.length == 0)
 							|| (conversation.account.name in rule.users))
-						&& (rule.rooms.some(function(room) {
-							return room.test(conversation.name);
-						}))
+						&& ((rule.rooms.length == 0)
+							|| (rule.rooms.some(function(room) {
+								return room.test(conversation.name);
+							})))
 						)
 						aObject.addTextModifier(autoLink.getLinkModifier(rule));
 				}
@@ -131,6 +132,10 @@ var autoLink = {
 	getLinkModifier: function(rule) {
 		return (function(aNode) {
 			let expression = new RegExp(rule.pattern, rule.flags);
+			// http://stackoverflow.com/questions/127055/find-out-number-of-capture-groups-in-python-regexp
+			let subgroups = /(\([^?(:|=|&)].*\))/;
+    return len([ 1 for x in re.finditer(pattern, regex) if x.group(1) ])
+
 			let subgroups = rule.subgroups;
 
 			aNode.data.replace(expression,
@@ -148,8 +153,8 @@ var autoLink = {
 							   let newNode = aNode.splitText(offset);
 							   aNode = newNode.splitText(str.length);
 							   let link = node.ownerDocument.createElement("a");
-							   link.setAttribute("href", convertRegexMatch(rule.link, str, matches));
-							   link.setAttribute("title", convertRegexMatch(rule.title, str, matches));
+							   link.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
+							   link.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
 							   link.setAttribute("class", "ib-bug-link");
 							
 							   newNode.parentNode.insertBefore(link, newNode);
