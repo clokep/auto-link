@@ -64,8 +64,7 @@ var autoLink = {
 						"title" : "Bug $1 @ bugzilla.mozilla.org",
 						"protocols" : ["prpl-irc"],
 						"users" : ["clokep","clokep_work"],
-						"rooms" : ["#[^(instant|song)bird]"],
-						"subgroups" : 1 // Hopefully this can be calculated
+						"rooms" : ["#[^(instant|song)bird]"]
 					},
 					{
 						"pattern" : "(test (\\d+))",
@@ -74,8 +73,7 @@ var autoLink = {
 						"title" : "Bug $1 @ $2",
 						"protocols" : [],
 						"users" : [],
-						"rooms" : [".*"],
-						"subgroups" : 1
+						"rooms" : [".*"]
 					},
 					{
 						"pattern" : "bug (\\d+)",
@@ -84,8 +82,7 @@ var autoLink = {
 						"title" : "Bug $1 @ bugzilla.mozilla.org",
 						"protocols" : ["prpl-irc"],
 						"users" : [],
-						"rooms" : ["#instantbird"],
-						"subgroups" : 1
+						"rooms" : ["#instantbird"]
 					}
 				];
 
@@ -123,31 +120,34 @@ var autoLink = {
 												+ arrMatches[parseInt(p1) - 1]
 												+ s.slice(offset + str.length);
 									else
-										// Throw an error?
-										return s;
+										return s; // Treat it as literal and return
 								})
 						);
 	},
 
 	getLinkModifier: function(rule) {
 		return (function(aNode) {
+			// Probably needs a try block around it
 			let expression = new RegExp(rule.pattern, rule.flags);
-			// http://stackoverflow.com/questions/127055/find-out-number-of-capture-groups-in-python-regexp
-			let subgroups = /(\([^?(:|=|&)].*\))/;
-    return len([ 1 for x in re.finditer(pattern, regex) if x.group(1) ])
-
-			let subgroups = rule.subgroups;
+			let capturingGroups = 0;
+			// Count the number of capturing groups: ( )
+			// We don't want non-caputring or look-aheads: (?: ), (?= ), (?! )
+			for (int i = 0; i < (rule.pattern.length - 1); i++)
+				if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
+					capturingGroups++;
+				else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
+					i++; // Skip the next char
 
 			aNode.data.replace(expression,
 						   // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
 						   (function() { // http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
 							   let str = arguments[0];
-							   let offset = arguments[subgroups + 1];
-							   let s = arguments[subgroups + 2];
+							   let offset = arguments[capturingGroups + 1];
+							   let s = arguments[capturingGroups + 2];
 							   let matches = [];
-							   if (subgroups > 0) {
+							   if (capturingGroups > 0) {
 								   // https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-								   matches = Array.prototype.slice.call(arguments).slice(1,1 + subgroups);
+								   matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups);
 							   }
 							
 							   let newNode = aNode.splitText(offset);
