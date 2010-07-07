@@ -44,7 +44,63 @@ var autoLink = {
 		// Components.interfaces.nsIObserver
 		observe: function(aObject, aTopic, aData) {
 			if (aTopic == "conversation-loaded") {
-				aObject.addTextModifier(link, aObject); // CHECK ME
+				var prefs =	Cc["@mozilla.org/preferences-service;1"]
+								.getService(Ci.nsIPrefService)
+								.getBranch("extensions.autolink.");
+				let rules = [];
+				try {
+					rules = JSON.parse(prefs.getCharPref("rules"));
+				} catch(e) {
+					// Well, just do nothing.
+					// Should probably throw an error
+				}
+				
+				// REMOVE ME
+				rules = [
+					{
+						"pattern" : "bug (\\d+)",
+						"flags" : "gi",
+						"link" : "https://bugzilla.mozilla.org/show_bug.cgi?id=$1",
+						"title" : "Bug $1 @ bugzilla.mozilla.org",
+						"protocols" : ["prpl-irc"],
+						"users" : ["clokep","clokep_work"],
+						"rooms" : ["#[^(instant|song)bird]"],
+						"subgroups" : 1 // Hopefully this can be calculated
+					},
+					{
+						"pattern" : "(test (\\d+))",
+						"flags" : "gi",
+						"link" : "https://google.com/$2/$1",
+						"title" : "Bug $1 @ $2",
+						"protocols" : [],
+						"users" : [],
+						"rooms" : [".*"],
+						"subgroups" : 1
+					},
+					{
+						"pattern" : "bug (\\d+)",
+						"flags" : "gi",
+						"link" : "https://bugzilla.instantbird.org/show_bug.cgi?id=$1",
+						"title" : "Bug $1 @ bugzilla.mozilla.org",
+						"protocols" : ["prpl-irc"],
+						"users" : [],
+						"rooms" : ["#instantbird"],
+						"subgroups" : 1
+					}
+				];
+
+				let conversation = aObject._conv; // http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
+				for each (var rule in rules) {
+					if ((rule.protocols.length == 0)
+							|| (conversation.account.protocol.name in rule.protocols)
+						&& ((rule.users.length == 0)
+							|| (conversation.account.name in rule.users))
+						&& (rule.rooms.some(function(room) {
+							return room.test(conversation.name);
+						}))
+						)
+						aObject.addTextModifier(autoLink.getLinkModifier(rule));
+				}
 			}
 		},
 		load: function() {
@@ -58,103 +114,67 @@ var autoLink = {
 	
 	// This will convert between "some string $1" to "some string " + matches[0]
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
-		return aString.replace(/\$&/gi, aMatchedString).replace(/\$(\d+)/gi,function(str, p1, offset, s) {
-			return s.slice(0,offset) + arrMatches[parseInt(p1) - 1] + s.slice(offset + str.length);
-		});
+		return aString.replace(/\$&/gi, aMatchedString)
+					   .replace(/\$(\d+)/gi,
+								(function(str, p1, offset, s) {
+									if (parseInt(p1) < matches.length)
+										return s.slice(0,offset)
+												+ arrMatches[parseInt(p1) - 1]
+												+ s.slice(offset + str.length);
+									else
+										// Throw an error?
+										return s;
+								})
+						);
 	},
 
-	link: function(aNode) {
-		var prefs =
-			Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService)
-													.getBranch("extensions.autolink.");
-		let rules = [];
-		try {
-			rules = JSON.parse(prefs.getCharPref("rules"));
-		} catch(e) {
-			// Well, just do nothing.
-			// Should probably throw an error
-		}
-		
-		// REMOVE ME
-		rules = [
-			{
-				"pattern" : "bug (\\d+)",
-				"flags" : "gi",
-				"link" : "https://bugzilla.mozilla.org/show_bug.cgi?id=$1",
-				"title" : "Bug $1 @ bugzilla.mozilla.org",
-				"room" : "#[^(instant|song)bird]",
-				"protocol" : "prpl-irc",
-				"subgroups" : 1 // Hopefully this can be calculated
-			},
-			{
-				"pattern" : "(test (\\d+))",
-				"flags" : "gi",
-				"link" : "https://google.com/$2/$1",
-				"title" : "Bug $1 @ $2",
-				"room" : ".*",
-				"protocol" : ".*",
-				"subgroups" : 1
-			},
-			{
-				"pattern" : "bug (\\d+)",
-				"flags" : "gi",
-				"link" : "https://bugzilla.instantbird.org/show_bug.cgi?id=$1",
-				"title" : "Bug $1 @ bugzilla.mozilla.org",
-				"room" : "#instantbird",
-				"protocol" : "prpl-irc",
-				"subgroups" : 1
-			}
-		];
+	getLinkModifier: function(rule) {
+		return (function(aNode) {
+			let expression = new RegExp(rule.pattern, rule.flags);
+			let subgroups = rule.subgroups;
 
-		for each (var rule in rules) {
-			//if () {
-				let expression = new RegExp(rule.pattern, rule.flags);
-				let subgroups = rule.subgroups;
-
-				aNode.data.replace(expression,
-							   // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
-							   function() { // http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
-								   let str = arguments[0];
-								   let offset = arguments[subgroups + 1];
-								   let s = arguments[subgroups + 2];
-								   let matches = [];
-								   if (subgroups > 0) {
-									   // https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-									   matches = Array.prototype.slice.call(arguments).slice(1,1 + subgroups);
-								   }
-								
-								   let newNode = aNode.splitText(offset);
-								   aNode = newNode.splitText(str.length);
-								   let link = node.ownerDocument.createElement("a");
-								   link.setAttribute("href", convertRegexMatch(rule.link, str, matches));
-								   link.setAttribute("title", convertRegexMatch(rule.title, str, matches));
-								   link.setAttribute("class", "ib-bug-link");
-								
-								   newNode.parentNode.insertBefore(link, newNode);
-								   link.appendChild(newNode);
+			aNode.data.replace(expression,
+						   // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
+						   (function() { // http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
+							   let str = arguments[0];
+							   let offset = arguments[subgroups + 1];
+							   let s = arguments[subgroups + 2];
+							   let matches = [];
+							   if (subgroups > 0) {
+								   // https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
+								   matches = Array.prototype.slice.call(arguments).slice(1,1 + subgroups);
 							   }
-							);
-				//alert(result);
+							
+							   let newNode = aNode.splitText(offset);
+							   aNode = newNode.splitText(str.length);
+							   let link = node.ownerDocument.createElement("a");
+							   link.setAttribute("href", convertRegexMatch(rule.link, str, matches));
+							   link.setAttribute("title", convertRegexMatch(rule.title, str, matches));
+							   link.setAttribute("class", "ib-bug-link");
+							
+							   newNode.parentNode.insertBefore(link, newNode);
+							   link.appendChild(newNode);
+						   })
+					   );
+			//alert(result);
 
-				/*let result = 0;
-				let match;
-				while ((match = expression(aNode.data))) {
-					let linkBugzillaNode = aNode.splitText(match.index);
-					aNode = linkBugzillaNode.splitText(exp.lastIndex - match.index);
-					let elt = aNode.ownerDocument.createElement("a");
-					elt.setAttribute("href", serverURL + match[1]);
-					elt.setAttribute("title", "Bug " + match[1] + " @ " + serverPrettyName);
-					elt.setAttribute("class", "ib-bug-link");
-					linkBugzillaNode.parentNode.insertBefore(elt, linkBugzillaNode);
-					elt.appendChild(linkBugzillaNode);
-					result += 2;
-					exp.lastIndex = 0;
-				}*/
-			//}
-		}
-
-		return aNode.data;
+			/*let result = 0;
+			let match;
+			while ((match = expression(aNode.data))) {
+				let linkBugzillaNode = aNode.splitText(match.index);
+				aNode = linkBugzillaNode.splitText(exp.lastIndex - match.index);
+				let elt = aNode.ownerDocument.createElement("a");
+				elt.setAttribute("href", serverURL + match[1]);
+				elt.setAttribute("title", "Bug " + match[1] + " @ " + serverPrettyName);
+				elt.setAttribute("class", "ib-bug-link");
+				linkBugzillaNode.parentNode.insertBefore(elt, linkBugzillaNode);
+				elt.appendChild(linkBugzillaNode);
+				result += 2;
+				exp.lastIndex = 0;
+			}*/
+			return aNode.data;
+		});
 	}
-}
+};
 
 this.addEventListener("load", autoLink.observer.load, false);
