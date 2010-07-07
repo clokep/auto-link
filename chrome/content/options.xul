@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<prefwindow id="linkbugzilla-prefwindow"
+            title="Link Bugzilla Options"
+            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <prefpane id="linkbugzilla-pane">
+    <preferences id="linkbugzilla-preferences">
+      <preference id="pref_bugzilla_server_url"
+                  name="extensions.linkbugzilla.bugzilla_server_url"
+                  type="string"/>
+      <preference id="pref_server_pretty_name"
+                  name="extensions.linkbugzilla.server_pretty_name"
+                  type="string"/>
+    </preferences>
+
+    <vbox>
+      <label value="URL of the bugtracker that you would like to use. The bug-id will be appended at the end, therefore make '&id=' the last parameter."
+             control="serverURL"/>
+      <spacer flex="1"/>
+      <textbox id="serverURL" size= "50"
+               preference="pref_bugzilla_server_url"/>
+      <spacer flex="1"/>
+      <label value="'Pretty server name', displayed on the tooltip of the link"
+             control="serverPrettyName" />
+      <spacer flex="1"/>
+      <textbox id="serverPrettyName" size= "50"
+               preference="pref_server_pretty_name"/>
+    </vbox>
+  </prefpane>
+</prefwindow>

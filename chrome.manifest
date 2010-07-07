@@ -1,0 +1,3 @@
+#content autolink jar:chrome/autolink.jar!/content/ xpcnativewrappers=yes
+content autolink chrome/content/ xpcnativewrappers=yes
+overlay	chrome://instantbird/content/blist.xul chrome://autolink/content/blist.xul
