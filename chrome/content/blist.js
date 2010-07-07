@@ -44,7 +44,7 @@ var autoLink = {
 		// Components.interfaces.nsIObserver
 		observe: function(aObject, aTopic, aData) {
 			if (aTopic == "conversation-loaded") {
-				aObject.addTextModifier(link);
+				aObject.addTextModifier(link, aObject); // CHECK ME
 			}
 		},
 		load: function() {
@@ -54,6 +54,13 @@ var autoLink = {
 		unload: function() {
 			removeObservers(autoLink.observer, autoLink.events);
 		}
+	},
+	
+	// This will convert between "some string $1" to "some string " + matches[0]
+	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
+		return aString.replace(/\$&/gi, aMatchedString).replace(/\$(\d+)/gi,function(str, p1, offset, s) {
+			return s.slice(0,offset) + arrMatches[parseInt(p1) - 1] + s.slice(offset + str.length);
+		});
 	},
 
 	link: function(aNode) {
@@ -77,7 +84,7 @@ var autoLink = {
 				"title" : "Bug $1 @ bugzilla.mozilla.org",
 				"room" : "#[^(instant|song)bird]",
 				"protocol" : "prpl-irc",
-				"subgroups" : 1
+				"subgroups" : 1 // Hopefully this can be calculated
 			},
 			{
 				"pattern" : "(test (\\d+))",
@@ -99,41 +106,34 @@ var autoLink = {
 			}
 		];
 
-		let result = aNode.data;
 		for each (var rule in rules) {
 			//if () {
-				let expression = new RegExp(rule.pattern,
-											rule.flags ? rule.flags : "");
-											alert(expression);
+				let expression = new RegExp(rule.pattern, rule.flags);
 				let subgroups = rule.subgroups;
-				alert(JSON.stringify(expression.exec(result)));
-				result = result.replace(expression,
-										// https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
-										(function() { // http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
-										   /*"<a href=\"" + rule.link + "\ title=\""
-											+ rule.title + "\">$&</a>"
-											})*/
 
-											let str = arguments[0];
-											let offset = arguments[subgroups + 1];
-											let s = arguments[subgroups + 2];
-											let matches = [];
-											if (subgroups > 0) {
-												// https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-												matches = Array.prototype.slice.call(arguments).slice(1,1 + subgroups);
-											}
-											
-											let newNode = aNode.splitText(offset);
-											aNode = newNode.splitText(str.length);
-											let link = node.ownerDocument.createElement("a");
-											link.setAttribute("href", rule.link.replace(/\$([&\d])/gi,));
-											link.setAttribute("title", rule.title);
-											link.setAttribute("class", "ib-bug-link");
-											
-											node.parentNode.insertBefore(elt, node);
-											link.appendChild(newNode);
-										})
-										);
+				aNode.data.replace(expression,
+							   // https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
+							   function() { // http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
+								   let str = arguments[0];
+								   let offset = arguments[subgroups + 1];
+								   let s = arguments[subgroups + 2];
+								   let matches = [];
+								   if (subgroups > 0) {
+									   // https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
+									   matches = Array.prototype.slice.call(arguments).slice(1,1 + subgroups);
+								   }
+								
+								   let newNode = aNode.splitText(offset);
+								   aNode = newNode.splitText(str.length);
+								   let link = node.ownerDocument.createElement("a");
+								   link.setAttribute("href", convertRegexMatch(rule.link, str, matches));
+								   link.setAttribute("title", convertRegexMatch(rule.title, str, matches));
+								   link.setAttribute("class", "ib-bug-link");
+								
+								   newNode.parentNode.insertBefore(link, newNode);
+								   link.appendChild(newNode);
+							   }
+							);
 				//alert(result);
 
 				/*let result = 0;
@@ -153,7 +153,7 @@ var autoLink = {
 			//}
 		}
 
-		return result;
+		return aNode.data;
 	}
 }
 
