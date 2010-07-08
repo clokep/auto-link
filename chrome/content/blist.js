@@ -37,9 +37,15 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+function dump(aMessage) {
+	var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+									 .getService(Components.interfaces.nsIConsoleService);
+	consoleService.logStringMessage("Auto-Link: " + aMessage);
+}
+
 var autoLink = {
 	// See https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Working_with_Objects#Defining_Getters_and_Setters
-	get events() { return ["conversation-loaded"]; }
+	get events() { return ["conversation-loaded"]; },
 
 	observer: {
 		// Implements Components.interfaces.nsIObserver
@@ -92,9 +98,9 @@ var autoLink = {
 				// Loop over each ruleset
 				for each (var rule in rules) {
 					// Check that the user/room names & protocol are valid
-					if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
+					/*if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
 						&& autoLink.inArray(conversation.account.name, rule.users)
-						&& autoLink.inArray(conversation.name, rule.rooms))
+						&& autoLink.inArray(conversation.name, rule.rooms))*/
 							// Add rule to current conversation
 							aObject.addTextModifier(autoLink.getLinkModifier(rule));
 				}
@@ -120,15 +126,15 @@ var autoLink = {
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
 		return aString.replace(/\$&/gi, aMatchedString)
 					   .replace(/\$(\d+)/gi,
-											(function(str, p1, offset, s) {
-												if (parseInt(p1) < matches.length)
-													return s.slice(0,offset)
-															+ arrMatches[parseInt(p1) - 1]
-															+ s.slice(offset + str.length);
-												else
-													return s; // Treat it as literal and return
-											})
-							);
+								(function(str, p1, offset, s) {
+									if (parseInt(p1) < matches.length)
+										return s.slice(0,offset)
+												+ arrMatches[parseInt(p1) - 1]
+												+ s.slice(offset + str.length);
+									else
+										return s; // Treat it as literal and return
+								})
+						);
 	},
 
 	getLinkModifier: function(rule) {
@@ -139,39 +145,49 @@ var autoLink = {
 			let capturingGroups = 0;
 			// Count the number of capturing groups: ( )
 			// We don't want non-caputring or look-aheads: (?: ), (?= ), (?! )
-			for (int i = 0; i < (rule.pattern.length - 1); i++)
+			for (var i = 0; i < (rule.pattern.length - 1); i++)
 				if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
 					capturingGroups++;
 				else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
 					i++; // Skip the next char
-
+			
+			let result = 0;
 			aNode.data.replace(expression,
-												 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
-												 (function() {
-													 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
-													 let str = arguments[0];
-													 let offset = arguments[capturingGroups + 1];
-													 let s = arguments[capturingGroups + 2];
-													 let matches = [];
-													 if (capturingGroups > 0) {
-														 // See https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-														 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups);
-													 }
-												
-													// Split into two text nodes
-													 let newNode = aNode.splitText(offset);
-													 // Split the second node again
-													 aNode = newNode.splitText(str.length);
-													 let link = node.ownerDocument.createElement("a");
-													 link.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
-													 link.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
-													 link.setAttribute("class", "ib-bug-link");
-												
-													 newNode.parentNode.insertBefore(link, newNode);
-													 link.appendChild(newNode);
-												 })
-								 );
-			return aNode.data;
+							 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
+							 (function() {
+								 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
+								 let str = arguments[0];
+								 let offset = arguments[capturingGroups + 1];
+								 let s = arguments[capturingGroups + 2];
+								 let matches = [];
+								 if (capturingGroups > 0) {
+									 // See https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
+									 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups);
+								 }
+
+								// Split into two text nodes
+								 let autoLinkNode = aNode.splitText(offset);
+								 // Split the second node again
+								 aNode = autoLinkNode.splitText(str.length);
+								 dump(aNode.toSource());
+								 dump(aNode.ownerDocument.toSource());
+								 dump(aNode.ownerDocument.wrappedJSObject.toSource());
+								 dump(aNode.ownerDocument.wrappedJSObject.createElement("a"));
+								 let linkNode = aNode.ownerDocument.wrappedJSObject.createElement("a");
+								 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
+								 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
+								 linkNode.setAttribute("class", "ib-bug-link");
+								 dump(linkNode);
+
+								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode);
+								 linkNode.appendChild(autoLinkNode);
+
+								 result += 2;
+								 dump(result);
+								 //dump(aNode.data);
+							 })
+			 );
+			return result;
 		});
 	}
 };
