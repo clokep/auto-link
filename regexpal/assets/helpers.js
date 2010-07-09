@@ -4,13 +4,7 @@
 	MIT license
 */
 
-function $ (el) {
-	if (el.nodeName) return el;
-	if (typeof el === "string") return document.getElementById(el);
-	return false;
-};
-
-var trim = function () {
+var trim = function() {
 	// See <http://blog.stevenlevithan.com/archives/faster-trim-javascript>
 	var	lSpace = /^\s\s*/,
 		rSpace = /\s\s*$/;
@@ -21,12 +15,8 @@ var trim = function () {
 
 // This is much faster than simple use of innerHTML in some browsers
 // See <http://blog.stevenlevithan.com/archives/faster-than-innerhtml>
-function replaceHtml (el, html) {
-	var oldEl = $(el);
-	/*@cc_on // Pure innerHTML is slightly faster in IE
-		oldEl.innerHTML = html;
-		return oldEl;
-	@*/
+function replaceHtml(el, html) {
+	var oldEl = document.getElementById(el);
 	var newEl = oldEl.cloneNode(false);
 	newEl.innerHTML = html;
 	oldEl.parentNode.replaceChild(newEl, oldEl);
@@ -38,23 +28,15 @@ function replaceHtml (el, html) {
 /* outerHTML is used to work around the fact that IE applies text normalization when using innerHTML,
 which can cause problems with whitespace, etc. Note that even this approach doesn't work with some
 elements such as <div>. However, it mostly works with <pre> elements, at least. */
-function replaceOuterHtml (el, html) {
+function replaceOuterHtml(el, html) {
 	el = replaceHtml(el, "");
-	if (el.outerHTML) { // If IE
-		var	id = el.id,
-			className = el.className,
-			nodeName = el.nodeName;
-		el.outerHTML = "<" + nodeName + " id=\"" + id + "\" class=\"" + className + "\">" + html + "</" + nodeName + ">";
-		el = $(id); // Reassign, since we just overwrote the element in the DOM
-	} else {
-		el.innerHTML = html;
-	}
+	el.innerHTML = html;
 	return el;
 };
 
 // Return an array of all elements with a specified class name, optionally filtered by tag name and parent
-function getElementsByClassName (className, tagName, parentNode) {
-	var	els = ($(parentNode) || document).getElementsByTagName(tagName || "*"),
+function getElementsByClassName(className, tagName, parentNode) {
+	var	els = (document.getElementById(parentNode) || document).getElementsByTagName(tagName || "*"),
 		results = [];
 	for (var i = 0; i < els.length; i++) {
 		if (hasClass(className, els[i])) results.push(els[i]);
@@ -62,25 +44,25 @@ function getElementsByClassName (className, tagName, parentNode) {
 	return results;
 };
 
-function hasClass (className, el) {
+function hasClass(className, el) {
 	/* It might not make sense to cache all regexes in a more widely used hasClass function,
 	but RegexPal uses it with a small number of classes so there is little memory overhead. */
-	return XRegExp.cache("(?:^|\\s)" + className + "(?:\\s|$)").test($(el).className);
+	return XRegExp.cache("(?:^|\\s)" + className + "(?:\\s|$)").test(document.getElementById(el).className);
 };
 
-function addClass (className, el) {
-	el = $(el);
+function addClass(className, el) {
+	el = document.getElementById(el);
 	if (!hasClass(className, el)) {
 		el.className = trim(el.className + " " + className);
 	}
 };
 
-function removeClass (className, el) {
-	el = $(el);
+function removeClass(className, el) {
+	el = document.getElementById(el);
 	el.className = trim(el.className.replace(XRegExp.cache("(?:^|\\s)" + className + "(?:\\s|$)", "g"), " "));
 };
 
-function toggleClass (className, el) {
+function toggleClass(className, el) {
 	if (hasClass(className, el)) {
 		removeClass(className, el);
 	} else {
@@ -88,12 +70,12 @@ function toggleClass (className, el) {
 	}
 };
 
-function swapClass (oldClass, newClass, el) {
+function swapClass(oldClass, newClass, el) {
 	removeClass(oldClass, el);
 	addClass(newClass, el);
 };
 
-function replaceSelection (textbox, str) {
+function replaceSelection(textbox, str) {
 	if (textbox.setSelectionRange) {
 		var	start = textbox.selectionStart,
 			end = textbox.selectionEnd,
@@ -107,13 +89,13 @@ function replaceSelection (textbox, str) {
 	}
 };
 
-function extend (to, from) {
+function extend(to, from) {
 	for (var property in from) to[property] = from[property];
 	return to;
 };
 
 // purge by Douglas Crockford <http://javascript.crockford.com/memory/leak.html>
-function purge (d) {
+function purge(d) {
 	var a = d.attributes, i, l, n;
 	if (a) {
 		l = a.length;
@@ -132,10 +114,3 @@ function purge (d) {
 		}
 	}
 };
-
-// Sniff
-var	isWebKit = navigator.userAgent.indexOf("WebKit") > -1,
-	isIE /*@cc_on = true @*/,
-	isIE6 /*@cc_on = @_jscript_version < 5.7 @*/; // Despite the variable name, this means if IE lower than v7
-
-// RegexPal also needs an Array.prototype.indexOf method, but it's provided by XRegExp

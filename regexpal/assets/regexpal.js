@@ -10,115 +10,79 @@
 // The RegexPal namespace
 //---------------------------------------------------------------------+
 
-var RegexPal = {
-	/* Store DOM node references for quick lookup */
-	fields: {
-		search: new SmartField("search"),
-		input:  new SmartField("input"),
-		options: {
-			flags: {
-				g: $("flagG"),
-				i: $("flagI"),
-				m: $("flagM"),
-				s: $("flagS")
-			},
-			highlightSyntax:  $("highlightSyntax"),
-			highlightMatches: $("highlightMatches"),
-			invertMatches:    $("invertMatches")
+var highlightMatches = function() {
+	// Cache the regexes through closure...
+	var re = {
+		/* If the matchPair regex seems a little crazy, the theory behind it is that it will be faster than using lazy quantification */
+		matchPair: /`~\{((?:[^}]+|\}(?!~`))*)\}~`((?:[^`]+|`(?!~\{(?:[^}]+|\}(?!~`))*\}~`))*)(?:`~\{((?:[^}]+|\}(?!~`))*)\}~`)?/g,
+		sansTrailingAlternator: /^(?:[^\\|]+|\\[\S\s]?|\|(?=[\S\s]))*/
+	};
+
+	return (function () {
+		var	search = String(search.textbox.value),
+			input  = String(input.textbox.value);
+
+		/* Abort if the user's regex contains an error (the test regex accounts for IE's changes to innerHTML).
+		The syntax highlighting catches a number of mistakes and cross-browser issues which might not cause the
+		browser to throw an error. Also abort if the search is empty and not using the invert results option, or
+		if match highlighting is disabled. */
+		if (
+			XRegExp.cache('<[bB] class="?err"?>').test(search.bg.innerHTML) ||
+			(!search.length && !options.invertMatches.checked) ||
+			!options.highlightMatches.checked
+		) {
+			input.clearBg();
+			return;
 		}
-	}
+
+		try {
+			/* If existing, a single trailing vertical bar (|) is removed from the regex which is to be applied
+			to the input text. This behavior is copied from RegexBuddy, and offers faster results and a less
+			surprising experience while the user is in the middle of creating a regex. */
+			var searchRegex = new XRegExp(re.sansTrailingAlternator.exec(search)[0],
+				(options.flags.g.checked ? "g" : "") +
+				(options.flags.i.checked ? "i" : "") +
+				(options.flags.m.checked ? "m" : "") +
+				(options.flags.s.checked ? "s" : "")
+			);
+		/* An error should never be thrown if syntax highlighting and XRegExp are working correctly, but the
+		potential is avoided nonetheless. */
+		} catch (err) {
+			input.clearBg();
+			return;
+		}
+
+		// Matches are never looped over, for performance reasons...
+
+		/* Initially, "`~{...}~`" is used as a safe string to encapsulate matches. Note that if such an
+		unlikely sequence appears in the text, you might receive incorrect results. */
+		if (options.invertMatches.checked) {
+			var output = ("`~{" +
+										input.replace(searchRegex, "}~`$&`~{") +
+										"}~`")
+									 /* Remove zero-length matches, and combine adjacent matches */
+									 .replace(XRegExp.cache("`~\\{\\}~`|\\}~``~\\{", "g"), "");
+		} else {
+			var output = input.replace(searchRegex, "`~{$&}~`");
+		}
+		/* Put all matches within alternating <b> and <i> elements (short element names speed up markup
+		generation). Angled brackets and ampersands are first replaced, to avoid unintended HTML markup
+		within the background <pre> element. */
+		output = output
+			.replace(XRegExp.cache("[<&>]", "g"), "_")
+			.replace(re.matchPair, "<b>$1</b>$2<i>$3</i>");
+
+		input.setBgHtml(output);
+	});
 };
 
-extend(RegexPal, function () {
-	// Make property shortcuts available to all methods of the returned object through closure...
-	var	f = RegexPal.fields,
-		o = f.options;
-
-	return {
-		highlightMatches: function () {
-			// Cache the regexes through closure...
-			var re = {
-				/* If the matchPair regex seems a little crazy, the theory behind it is that it will be faster than using lazy quantification */
-				matchPair: /`~\{((?:[^}]+|\}(?!~`))*)\}~`((?:[^`]+|`(?!~\{(?:[^}]+|\}(?!~`))*\}~`))*)(?:`~\{((?:[^}]+|\}(?!~`))*)\}~`)?/g,
-				sansTrailingAlternator: /^(?:[^\\|]+|\\[\S\s]?|\|(?=[\S\s]))*/
-			};
-
-			return function () {
-				var	search = String(f.search.textbox.value),
-					input  = String(f.input.textbox.value);
-
-				/* Abort if the user's regex contains an error (the test regex accounts for IE's changes to innerHTML).
-				The syntax highlighting catches a number of mistakes and cross-browser issues which might not cause the
-				browser to throw an error. Also abort if the search is empty and not using the invert results option, or
-				if match highlighting is disabled. */
-				if (
-					XRegExp.cache('<[bB] class="?err"?>').test(f.search.bg.innerHTML) ||
-					(!search.length && !o.invertMatches.checked) ||
-					!o.highlightMatches.checked
-				) {
-					f.input.clearBg();
-					return;
-				}
-
-				try {
-					/* If existing, a single trailing vertical bar (|) is removed from the regex which is to be applied
-					to the input text. This behavior is copied from RegexBuddy, and offers faster results and a less
-					surprising experience while the user is in the middle of creating a regex. */
-					var searchRegex = new XRegExp(re.sansTrailingAlternator.exec(search)[0],
-						(o.flags.g.checked ? "g" : "") +
-						(o.flags.i.checked ? "i" : "") +
-						(o.flags.m.checked ? "m" : "") +
-						(o.flags.s.checked ? "s" : "")
-					);
-				/* An error should never be thrown if syntax highlighting and XRegExp are working correctly, but the
-				potential is avoided nonetheless. Safari in particular has several strange bugs which cause its regex
-				engine's parser to barf during compilation. */
-				} catch (err) {
-					f.input.clearBg();
-					return;
-				}
-
-				// Matches are never looped over, for performance reasons...
-
-				/* Initially, "`~{...}~`" is used as a safe string to encapsulate matches. Note that if such an
-				unlikely sequence appears in the text, you might receive incorrect results. */
-				if (o.invertMatches.checked) {
-					var output = ("`~{" +
-					              input.replace(searchRegex, "}~`$&`~{") +
-					              "}~`")
-					             /* Remove zero-length matches, and combine adjacent matches */
-					             .replace(XRegExp.cache("`~\\{\\}~`|\\}~``~\\{", "g"), "");
-				} else {
-					var output = input.replace(searchRegex, "`~{$&}~`");
-				}
-				/* Put all matches within alternating <b> and <i> elements (short element names speed up markup
-				generation). Angled brackets and ampersands are first replaced, to avoid unintended HTML markup
-				within the background <pre> element. */
-				output = output
-					.replace(XRegExp.cache("[<&>]", "g"), "_")
-					.replace(re.matchPair, "<b>$1</b>$2<i>$3</i>");
-
-				f.input.setBgHtml(output);
-			};
-		}(),
-
-		highlightSearchSyntax: function () {
-			if (o.highlightSyntax.checked) {
-				f.search.setBgHtml(parseRegex(f.search.textbox.value));
-			} else {
-				f.search.clearBg();
-			}
-		},
-
-		permalink: function () {
-			var	flagsStr = (o.flags.i.checked ? "i" : "") + (o.flags.m.checked ? "m" : "") + (o.flags.s.checked ? "s" : ""),
-				regexStr = encodeURIComponent(f.search.textbox.value),
-				inputStr = encodeURIComponent(f.input.textbox.value);
-
-			location = "./?flags=" + flagsStr + "&regex=" + regexStr + "&input=" + inputStr;
-		}
-	};
-}());
+var highlightSearchSyntax = function() {
+	if (options.highlightSyntax.checked) {
+		search.setBgHtml(parseRegex(search.textbox.value));
+	} else {
+		search.clearBg();
+	}
+};
 
 
 //---------------------------------------------------------------------+
@@ -490,7 +454,7 @@ var parseRegex = function () {
 
 		return output;
 	};
-}();
+};
 
 
 //---------------------------------------------------------------------+
@@ -507,7 +471,7 @@ benefits over traditional JavaScript-based rich text editors, although
 with more limited capabilities. */
 
 function SmartField (el) {
-	el = $(el);
+	el = document.getElementById(el);
 	/* The <textarea> element already exists for graceful-degradation reasons.
 	Not that RegexPal would work at all without JavaScript, but whatever. */
 	var	textboxEl = el.getElementsByTagName("textbox")[0],
@@ -521,50 +485,22 @@ function SmartField (el) {
 	textboxEl.onkeydown = function (e) {SmartField.prototype._onKeyDown(e);};
 	textboxEl.onkeyup   = function (e) {SmartField.prototype._onKeyUp(e);};
 
-	// Avoid unnecessary horizontal scollbars in IE, which wraps long words differently than Firefox
-	if (isIE) el.style.overflowX = "hidden";
 	// Turn off spellcheck for Firefox
 	if (textboxEl.spellcheck) textboxEl.spellcheck = false;
-	/* Safari 3 beta starts textarea contents three pixels from the left, and this cannot be removed
-	by setting CSS padding or margin attributes to zero. */
-	if (isWebKit) textboxEl.style.marginLeft = "-3px";
 
 	this.field = el;
 	this.textbox = textboxEl;
 	this.bg = bgEl;
 };
 
-extend(SmartField.prototype, {
+SmartField.prototype = {
 	setBgHtml: function (html) {
-		// Workaround an IE text-normaliztion bug where a leading newline is removed (causing highlighting to be misaligned)
-		if (isIE) html = html.replace(XRegExp.cache("^\\r\\n"), "\r\n\r\n");
 		// The trailing characters improve seemless scrolling
 		this.bg = replaceOuterHtml(this.bg, html + "<br>&nbsp;");
-		this.setDimensions();
 	},
 
 	clearBg: function () {
 		this.setBgHtml(this.textbox.value.replace(XRegExp.cache("[<&>]", "g"), "_"));
-	},
-
-	setDimensions: function () {
-		/* Set the width of the textarea to its scrollWidth. Note that although the background content autoexpands, its
-		offsetWidth isn't dynamically updated as is its offsetHeight (at least in Firefox 2). The pixel adjustments avoid
-		an unnecessary horizontal scrollbar and keep the last character to the right in view when the container element
-		has a horizontal scrollbar. */
-		this.textbox.style.width = "";
-		var	scrollWidth = this.textbox.scrollWidth,
-			offsetWidth = this.textbox.offsetWidth;
-
-		this.textbox.style.width = (scrollWidth === offsetWidth ? offsetWidth - 1 : scrollWidth + 8) + "px";
-
-		/* Set the height of the absolute-positioned textarea to its background content's offsetHeight. Since the background
-		content autoexpands, this allows the elements to be scrolled simultaneously using the parent element's scrollbars.
-		Setting it to textbox.scrollHeight instead of bg.offsetHeight would also work, but that would require us to first
-		blank style.height. It would also prevent us from improving seemless scrolling by adding trailing characters to the
-		background content (which is done outside this method) before testing its height. Comparing bg.offsetHeight to the
-		container's offsetHeight (minus 2 for borders) is done for the sake of IE6, since CSS min-height doesn't work there. */
-		this.textbox.style.height = Math.max(this.bg.offsetHeight, this.field.offsetHeight - 2) + "px";
 	},
 
 	_onKeyDown: function (e) {
@@ -572,18 +508,13 @@ extend(SmartField.prototype, {
 		if (!this._filterKeys(e)) return false;
 		var srcEl = e.srcElement || e.target;
 		switch (srcEl) {
-			case RegexPal.fields.search.textbox:
+			case search.textbox:
 				// Since the textbox's value doesn't change until the keydown event finishes, run the match after 0ms
-				setTimeout(function () {RegexPal.highlightSearchSyntax.call(RegexPal);}, 0);
+				setTimeout(function () {highlightSearchSyntax.call(RegexPal);}, 0);
 				break;
 			// There might be other elements to handle in the future (e.g., replacement)
 		}
-		/* Scrolling works automatically in IE and Firefox. A bug with Opera's scrollHeight causes height to go wonky
-		if we use it repeatedly as below, so this is only for WebKit. Compared to real autoscrolling, this is an
-		incomplete patch job, as it only scrolls when the cursor is at the end of the text. */
-		if (isWebKit && srcEl.selectionEnd === srcEl.value.length) {
-			srcEl.parentNode.scrollTop = srcEl.scrollHeight;
-		}
+
 		this._testKeyHold(e);
 	},
 
@@ -594,9 +525,9 @@ extend(SmartField.prototype, {
 		if (this._matchOnKeyUp) {
 			this._matchOnKeyUp = false; // Reset
 			switch (srcEl) {
-				case RegexPal.fields.search.textbox: // fallthru
-				case RegexPal.fields.input.textbox:
-					RegexPal.highlightMatches();
+				case search.textbox: // fallthru
+				case input.textbox:
+					highlightMatches();
 					break;
 				// There might be other elements to handle in the future
 			}
@@ -610,15 +541,15 @@ extend(SmartField.prototype, {
 		couple keydowns before removing the matches offers a balanace between reducing performance issues when
 		holding down keys, and keeping performance up for fast typists. */
 		if (this._keydownCount > 2) {
-			RegexPal.fields.input.clearBg();
+			input.clearBg();
 			this._matchOnKeyUp = true;
 		} else {
 			/* Since we're running this on keydown but the textbox's value doesn't change until code for the
 			event finishes, run the match after 0ms as a workaround. */
 			switch (srcEl) {
-				case RegexPal.fields.search.textbox: // fallthru
-				case RegexPal.fields.input.textbox:
-					setTimeout(function () {RegexPal.highlightMatches.call(RegexPal);}, 0);
+				case search.textbox: // fallthru
+				case input.textbox:
+					setTimeout(function () {highlightMatches.call(RegexPal);}, 0);
 					break;
 				// There might be other elements to handle in the future
 			}
@@ -627,7 +558,7 @@ extend(SmartField.prototype, {
 
 	_filterKeys: function (e) {
 		var	srcEl = e.srcElement || e.target,
-			f = RegexPal.fields;
+			f = fields;
 
 		// If the user pressed a key which does not change the input, return false to prevent running a match
 		if (this._deadKeys.indexOf(e.keyCode) > -1)
@@ -644,9 +575,6 @@ extend(SmartField.prototype, {
 				} else {
 					// Insert a tab character, overwriting any selected text
 					replaceSelection(srcEl, "\t");
-					// Opera's tabbing mechanism fires before keydown, so bring back the focus
-					if (window.opera)
-						setTimeout(function () {srcEl.focus();}, 0);
 				}
 			} else {
 				f.input.textbox.focus();
@@ -661,104 +589,50 @@ extend(SmartField.prototype, {
 
 	_matchOnKeyUp: false,
 	_keydownCount: 0,
-	_deadKeys: [16,17,18,19,20,27,33,34,35,36,37,38,39,40,44,45,112,113,114,115,116,117,118,119,120,121,122,123,144,145]
-});
+	_deadKeys: [16,17,18,19,20,27,33,34,35,36,37,38,39,40,44,45,91,93,112,113,114,115,116,117,118,119,120,121,122,123,144,145]
+};
 
 /* Killed key codes:
 16:  shift          17:  ctrl           18:  alt            19:  pause          20:  caps lock
 27:  escape         33:  page up        34:  page down      35:  end            36:  home
 37:  left           38:  up             39:  right          40:  down           44:  print screen
-45:  insert         112: f1             113: f2             114: f3             115: f4
-116: f5             117: f6             118: f7             119: f8             120: f9
-121: f10            122: f11            123: f12            144: num lock       145: scroll lock
-
-These could be included, but Opera handles them incorrectly:
-91:  Windows (Opera reports both the Windows key and "[" as 91.)
-93:  context menu (Opera reports the context menu key as 0, and "]" as 93.) */
+45:  insert         91:  Windows        93:  context menu   112: f1             113: f2
+114: f3             115: f4             116: f5             117: f6             118: f7
+119: f8             120: f9             121: f10            122: f11            123: f12
+144: num lock       145: scroll lock
+*/
 
 
 //---------------------------------------------------------------------+
 // Page setup
 //---------------------------------------------------------------------+
 
-(function () {
-	var	f = RegexPal.fields,
-		o = f.options;
+alert(parseRegex("\\d"));
 
-	onresize = function (e) {
-		// Make the input field fill viewport height
-		f.input.field.style.height = Math.max((window.innerHeight || document.documentElement.clientHeight) - 210, 60) + "px";
-		f.search.setDimensions();
-		f.input.setDimensions();
-	};
-	onresize(); // Immediately resize to viewport height
-
-	// Run a match and syntax highlighting with whatever data exists onload
-	RegexPal.highlightSearchSyntax();
-	RegexPal.highlightMatches();
-
-	for (var flag in o.flags) {
-		o.flags[flag].onclick = RegexPal.highlightMatches;
-	}
-
-	o.highlightSyntax.onclick  = RegexPal.highlightSearchSyntax;
-	o.highlightMatches.onclick = RegexPal.highlightMatches;
-	o.invertMatches.onclick    = RegexPal.highlightMatches;
-
-	function makeResetter (field) {
-		return function () {
-			field.clearBg();
-			field.textbox.value = "";
-			field.textbox.onfocus = null;
+/* Store DOM node references globally for quick lookup */
+var search = new SmartField("search"),
+		input = new SmartField("input"),
+		options = {
+			flags: {
+				g: document.getElementById("flagG"),
+				i: document.getElementById("flagI"),
+				m: document.getElementById("flagM"),
+				s: document.getElementById("flagS")
+			},
+			highlightSyntax:  document.getElementById("highlightSyntax"),
+			highlightMatches: document.getElementById("highlightMatches"),
+			invertMatches:    document.getElementById("invertMatches")
 		};
-	};
-	if (f.search.textbox.value === "Enter regex here.") {
-		f.search.textbox.onfocus = makeResetter(f.search);
-	}
-	if (f.input.textbox.value === "Enter test data here.") {
-		f.input.textbox.onfocus = makeResetter(f.input);
-	}
 
-	// The implementation for the options and quick reference behavior could be a lot more fancy, but whatever...
+// Run a match and syntax highlighting with whatever data exists onload
+highlightSearchSyntax();
+/*highlightMatches();
 
-	var	refDropdown = $("quickReferenceDropdown"),
-		refBox      = $("quickReference"),
-		refBoxPin   = getElementsByClassName("pin", "img", refBox)[0],
-		refBoxClose = getElementsByClassName("close", "img", refBox)[0];
+for (var flag in o.flags) {
+	options.flags[flag].onclick = highlightMatches;
+}
 
-	refDropdown.onmouseover = function (e) {
-		removeClass("hidden", refBox);
-		addClass("hover", this);
-	};
-	refDropdown.onmouseout = function (e) {
-		if (!hasClass("pinned", refBox)) {
-			addClass("hidden", refBox);
-			removeClass("hover", this);
-		}
-	};
-	refBox.onmouseover = function (e) {refDropdown.onmouseover();};
-	refBox.onmouseout  = function (e) {refDropdown.onmouseout();};
-	refBoxPin.onclick  = function (e) {
-		this.src = "./assets/" + (hasClass("pinned", refBox) ? "pin" : "pinned") + ".gif";
-		toggleClass("pinned", refBox);
-	};
-	refBoxClose.onclick = function (e) {
-		swapClass("pinned", "hidden", refBox);
-		refBoxPin.src = "./assets/pin.gif";
-	};
-
-	if (isIE6) {
-		var optionsDropdown = $("optionsDropdown");
-		// IE6 only supports the :hover pseudo-class for anchor elements, so mimic it with class "hover"
-		optionsDropdown.onmouseenter = function () {addClass("hover", this);};
-		optionsDropdown.onmouseleave = function () {removeClass("hover", this);};
-
-		onunload = function (e) {
-			// No need to purge the potentially numerous descendants of the background <pre> elements
-			f.search.clearBg();
-			f.input.clearBg();
-			// Remove event handlers to clear memory leaks
-			purge(document.body);
-		};
-	}
-})();
+options.highlightSyntax.onclick  = highlightSearchSyntax;
+options.highlightMatches.onclick = highlightMatches;
+options.invertMatches.onclick    = highlightMatches;
+*/

@@ -40,6 +40,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <?xml-stylesheet href="./assets/regexpal.css" type="text/css"?>
+<?xml-stylesheet href="./jsresyntaxhighlighter.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
             title="Regex Tester - RegexPal"
@@ -49,16 +50,15 @@
 		<menubar id="options">
 			<menu id="options-menu" label="Options">
 				<menupopup id="optionsDropdown">
-					<menuitem type="checkbox" checked="true" label="Highlight regex syntax"/>
-					<menuitem type="checkbox" checked="true" label="Highlight matches"/>
-					<menuitem type="checkbox" label="Invert results"/>
+					<menuitem id="highlightSyntax" type="checkbox" checked="true" label="Highlight regex syntax"/>
+					<menuitem id="highlightMatches" type="checkbox" checked="true" label="Highlight matches"/>
+					<menuitem id="invertMatches" type="checkbox" label="Invert results"/>
 				</menupopup>
 			</menu>
 			<menu id="quickReferenceDropdown" label="JavaScript Regex Quick Reference">
 				<!-- Replace with a panel? -->
 				<menupopup id="quickReference2">
 					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
-					<menuitem class="menuitem-iconic pin" image="./assets/pin.gif" label="Pin this Menu Open"/>
 					<menuitem class="menuitem-iconic close" image="./assets/close.gif" label="Close Menu"/>
 					<menuseparator/>
 					<menuitem label=". Any character except newline."/>
@@ -87,7 +87,6 @@
 			<menu id="blah" label="test">
 				<menupopup>
 					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
-					<menuitem class="menuitem-iconic pin" image="./assets/pin.gif" label="Pin this Menu Open"/>
 					<menuitem class="menuitem-iconic close" image="./assets/close.gif" label="Close Menu"/>
 					<menuseparator/>
 						<hbox>
@@ -101,9 +100,7 @@
 								<label class="plain monospace">\.</label>
 							</label>
 							<label>A period (and so on for 
-								<label class="plain monospace">\*</label>, 
-								<label class="plain monospace">\(</label>, 
-								<label class="plain monospace">\\</label>, etc.)
+								<label class="plain monospace">\*</label>, <label class="plain monospace">\(</label>, <label class="plain monospace">\\</label>, etc.)
 							</label>
 						</hbox>
 						<hbox>
@@ -120,17 +117,13 @@
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">\d</label>,
-								<label class="plain monospace">\w</label>,
-								<label class="plain monospace">\s</label>
+								<label class="plain monospace">\d</label>,<label class="plain monospace">\w</label>,<label class="plain monospace">\s</label>
 							</label>
 							<label>A digit, word character <label class="plain monospace">[A-Za-z0-9_]</label>, or whitespace.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">\D</label>,
-								<label class="plain monospace">\W</label>,
-								<label class="plain monospace">\S</label>
+								<label class="plain monospace">\D</label>,<label class="plain monospace">\W</label>,<label class="plain monospace">\S</label>
 							</label>
 							<label>Anything except a digit, word character, or whitespace.</label>
 						</hbox>
@@ -178,65 +171,49 @@
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">{
-								<label class="plain em">n</label>}</label>
+								<label class="plain monospace">{<label class="plain em">n</label>}</label>
 							</label>
 							<label>Exactly <label class="plain em">n</label> of the preceding element.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">{
-								<label class="plain em">n</label>,}</label>
+								<label class="plain monospace">{<label class="plain em">n</label>,}</label>
 							</label>
 							<label><label class="plain em">n</label> or more of the preceding element.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">{
-								<label class="plain em">m</label>,
-								<label class="plain em">n</label>}</label>
+								<label class="plain monospace">{<label class="plain em">m</label>,<label class="plain em">n</label>}</label>
 							</label>
 							<label>Between <label class="plain em">m</label> and <label class="plain em">n</label> of the preceding element.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">??</label>,
-								<label class="plain monospace">*?</label>,
-								<label class="plain monospace">+?</label>,
-								<br/><label class="plain monospace">{
-								<label class="plain em">n</label>}?</label>, etc.
+								<label class="plain monospace">??</label>,<label class="plain monospace">*?</label>,<label class="plain monospace">+?</label>,<label class="plain monospace">{<label class="plain em">n</label>}?</label>, etc.
 							</label>
 							<label>Same as above, but as few times as possible.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">(</label>
-								<label class="plain em">expr</label>
-								<label class="plain monospace">)</label>
+								<label class="plain monospace">(</label><label class="plain em">expr</label><label class="plain monospace">)</label>
 							</label>
 							<label>Capture <label class="plain em">expr</label> for use with <label class="plain monospace">\1</label>, etc.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">(?:</label>
-								<label class="plain em">expr</label>
-								<label class="plain monospace">)</label>
+								<label class="plain monospace">(?:</label><label class="plain em">expr</label><label class="plain monospace">)</label>
 							</label>
 							<label>Non-capturing group.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">(?=</label>
-								<label class="plain em">expr</label>
-								<label class="plain monospace">)</label>
+								<label class="plain monospace">(?=</label><label class="plain em">expr</label><label class="plain monospace">)</label>
 							</label>
 							<label>Followed by <label class="plain em">expr</label>.</label>
 						</hbox>
 						<hbox>
 							<label class="indent">
-								<label class="plain monospace">(?!</label>
-								<label class="plain em">expr</label>
-								<label class="plain monospace">)</label>
+								<label class="plain monospace">(?!</label><label class="plain em">expr</label><label class="plain monospace">)</label>
 							</label>
 							<label>Not followed by <label class="plain em">expr</label>.</label>
 						</hbox>
@@ -245,13 +222,13 @@
 		</menubar>
 
 		<hbox id="options">
-			<checkbox label="Global" checked="true"/>
+			<checkbox id="flagG" label="Global" checked="true"/>
 			<label class="flag" value="(g)"/>
-			<checkbox label="Case insensitive" checked="true"/>
+			<checkbox id="flagI" label="Case insensitive" checked="true"/>
 			<label class="flag" value="(i)"/>
-			<checkbox label="^$ match at line breaks" checked="false"/>
+			<checkbox id="flagM" label="^$ match at line breaks" checked="false"/>
 			<label class="flag" value="(m)"/>
-			<checkbox label="Dot matches all" checked="false"/>
+			<checkbox id="flagS" label="Dot matches all" checked="false"/>
 			<label class="flag" value="(s"/>
 			<label class="plain" value=" via "/>
 			<label class="text-link plain" href="http://stevenlevithan.com/regex/xregexp/" value="XRegExp"/>
@@ -259,12 +236,14 @@
 		</hbox>
 
 		<vbox id="body">
-			<hbox id="search" class="smartField" flex="3">
-				<textbox flex="1" tabindex="1" multiline="true" value="Enter regex here" />
-			</hbox>
-			<hbox id="input" class="smartField" flex="10">
+			<stack orient="horizontal" id="search" class="smartField" flex="0">
+				<hbox id="bgs"><span class="plain monospace" style="background-color: red; width: 6ex;"></span><span class="plain monospace" style="background-color: blue; width: 3ex;"></span></hbox>
+				<textbox id="regex" class="plain monospace" tabindex="1" value="Enter regex here(\d+?).+" />
+			</stack>
+			<stack id="input" class="smartField" flex="1">
+				<hbox></hbox>
 				<textbox flex="1" tabindex="2" multiline="true" value="Enter test data here" />
-			</hbox>
+			</stack>
 		</vbox>
 		
 		<hbox id="footer" flex="1">
@@ -275,8 +254,10 @@
 			</label>
 		</hbox>
 
-		<script type="application/javascript" src="./assets/xregexp.js"></script>
+		<!--<script type="application/javascript" src="./assets/xregexp.js"></script>
 		<script type="application/javascript" src="./assets/helpers.js"></script>
-		<script type="application/javascript" src="./assets/regexpal.js"></script>
+		<script type="application/javascript" src="./assets/regexpal.js"></script>-->
+		<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
+		<script type="application/javascript" src="./runner.js"/>
 	</prefpane>
 </prefwindow>
