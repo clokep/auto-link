@@ -150,7 +150,7 @@ var autoLink = {
 					capturingGroups++;
 				else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
 					i++; // Skip the next char
-			
+
 			let result = 0;
 			aNode.data.replace(expression,
 							 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
@@ -169,18 +169,18 @@ var autoLink = {
 								 let autoLinkNode = aNode.splitText(offset);
 								 // Split the second node again
 								 aNode = autoLinkNode.splitText(str.length);
-								 dump(aNode.toSource());
+								 /*dump(aNode.toSource());
 								 dump(aNode.ownerDocument.toSource());
 								 dump(aNode.ownerDocument.wrappedJSObject.toSource());
-								 dump(aNode.ownerDocument.wrappedJSObject.createElement("a"));
+								 dump(aNode.ownerDocument.wrappedJSObject.createElement("a"));*/
 								 let linkNode = aNode.ownerDocument.wrappedJSObject.createElement("a");
 								 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
 								 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
 								 linkNode.setAttribute("class", "ib-bug-link");
-								 dump(linkNode);
 
-								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode);
-								 linkNode.appendChild(autoLinkNode);
+								 dump("Here");
+								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode); dump("1");
+								 linkNode.appendChild(autoLinkNode);dump("5");
 
 								 result += 2;
 								 dump(result);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ***** BEGIN LICENSE BLOCK *****
- - Version: MPL 1.1/GPL 2.0/LGPL 2.1
+ - Version: MPL1/GPL0/LGPL1
  -
  - The contents of this file are subject to the Mozilla Public License Version
- - 1.1 (the "License"); you may not use this file except in compliance with
+ -1 (the "License"); you may not use this file except in compliance with
  - the License. You may obtain a copy of the License at
  - http://www.mozilla.org/MPL/
  -
@@ -24,7 +24,7 @@
  -
  - Alternatively, the contents of this file may be used under the terms of
  - either the GNU General Public License Version 2 or later (the "GPL"), or
- - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+ - the GNU Lesser General Public License Version1 or later (the "LGPL"),
  - in which case the provisions of the GPL or the LGPL are applicable instead
  - of those above. If you wish to allow use of your version of this file only
  - under the terms of either the GPL or the LGPL, and not to allow others to
@@ -38,11 +38,14 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
+
 <prefwindow id="autoLink-prefwindow"
             title="Link Bugzilla Options"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <prefpane id="autoLink-pane">
+	<!--<script type="application/javascript" src="chrome://autolink/content/options.js"/>//-->
+	<script type="application/javascript" src="options.js"/>
     <preferences id="linkbugzilla-preferences">
       <preference id="pref_bugzilla_server_url"
                   name="extensions.linkbugzilla.bugzilla_server_url"
@@ -52,7 +55,19 @@
                   type="string"/>
     </preferences>
 
-    <vbox>
+	<popupset>
+		<menupopup id="clipmenu" onpopupshowing="return openPopup(event);" onpopuphiding="return closePopup(event);">
+			<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+			<menuseparator/>
+			<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
+			<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
+			<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>
+			<menuseparator/>
+			<menuitem label="Close"/>
+		</menupopup>
+	</popupset>
+
+    <!--<vbox>
       <label value="URL of the bugtracker that you would like to use. The bug-id will be appended at the end, therefore make '&id=' the last parameter."
              control="serverURL"/>
       <spacer flex="1"/>
@@ -64,6 +79,31 @@
       <spacer flex="1"/>
       <textbox id="serverPrettyName" size= "50"
                preference="pref_server_pretty_name"/>
-    </vbox>
+    </vbox>//-->
+
+		<label value="Right click for popup" popup="clipmenu"/>
+		
+	 <tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true"> 
+		 <treecols>
+			 <treecol id="sender" label="Sender" flex="1"/>  
+			 <treecol id="protocol" label="Protocol" flex="2"/>  
+		 </treecols>
+
+		 <treechildren popup="clipmenu">  
+			 <treeitem>  
+				 <treerow>  
+					 <treecell label="joe@somewhere.com"/>  
+					 <treecell label="Top secret plans" editable="false"/>  
+				 </treerow>  
+			 </treeitem>  
+			 <treeitem>  
+				 <treerow>  
+					 <treecell label="mel@whereever.com"/>  
+					 <treecell label="Let's do lunch" editable="false"/>  
+				 </treerow>  
+			 </treeitem>  
+		 </treechildren>
+	 </tree> 
+
   </prefpane>
 </prefwindow>

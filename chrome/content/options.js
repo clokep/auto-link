@@ -34,6 +34,37 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var autoLinkTreeView = {
+var protocols = ["prpl-aim", "prpl-msn", "prpl-ymsgr"];
 
-};
+function openPopup(event) {
+	// See https://developer.mozilla.org/en/XUL/menupopup
+	let treeElement = event.rangeParent;
+  let row = new Object();
+  let col = new Object();
+  let treeCell = new Object();
+  
+  treeElement.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, treeCell)
+
+  if (col.value.id == "protocol") {
+		return false; // prevent popup from appearing
+	}
+	
+	let ruleProtocols = JSON.parse(treeCell.value);
+	let menu = document.getElementById("clipmenu");
+	for each (var protocol in protocols)
+		menu.getElementById(protocol.name).checked = protocol.checked;
+}
+
+function closePopup(event) {
+	// See https://developer.mozilla.org/en/XUL/menupopup
+	let treeElement = document.getElementById("thetree");
+	let treeCell = treeElement.currentIndex;
+
+  let ruleProtocols = [];
+	for each (var protocol in protocols) {
+		let menuitem = document.getElementById("clipmenu");
+		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.checked});
+		popup.checked = false; // Reset
+	}
+	treeCell.value = JSON.stringify(ruleProtocols);
+}
