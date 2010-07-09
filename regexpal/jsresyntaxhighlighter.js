@@ -43,7 +43,7 @@ var highlightJsReSyntax;
             switch (m.charAt(0)) {
                 // Character class
                 case "[":
-                    output += "<i>" + parseCharClass(m) + "</i>";
+                    output += "<span class=\"i\">" + parseCharClass(m) + "</span>";
                     lastToken = {quantifiable: true};
                     break;
                 // Group opening
@@ -113,10 +113,10 @@ var highlightJsReSyntax;
                             num = Math.floor(num / 10); // Drop the last digit
                         }
                         if (num > 0) {
-                            output += "<b>\\" + num + "</b>" + nonBackrefDigits;
+                            output += "<span class=\"b\">\\" + num + "</span>" + nonBackrefDigits;
                         } else {
                             var parts = /^\\([0-3][0-7]{0,2}|[4-7][0-7]?|[89])([0-9]*)/.exec(m);
-                            output += "<b>\\" + parts[1] + "</b>" + parts[2];
+                            output += "<span class=\"b\">\\" + parts[1] + "</span>" + parts[2];
                         }
                     // Metasequence
                     } else if (/^[0bBcdDfnrsStuvwWx]/.test(m.charAt(1))) {
@@ -130,7 +130,7 @@ var highlightJsReSyntax;
                             lastToken = {quantifiable: false};
                             break;
                         }
-                        output += "<b>" + m + "</b>";
+                        output += "<span class=\"b\">" + m + "</span>";
                         // Non-quantifiable metasequence
                         if ("bB".indexOf(m.charAt(1)) > -1) {
                             lastToken = {quantifiable: false};
@@ -164,7 +164,7 @@ var highlightJsReSyntax;
                                 output += errorStr(m);
                             } else {
                                 // Quantifiers for groups are shown in the style of the (preceeding) group's depth
-                                output += (lastToken.style ? '<b class="' + lastToken.style + '">' : '<b>') + m + '</b>';
+                                output += (lastToken.style ? '<span class="b ' + lastToken.style + '">' : '<span class="b">') + m + '</span>';
                             }
                         } else {
                             output += errorStr(m);
@@ -180,7 +180,7 @@ var highlightJsReSyntax;
                             output += errorStr(m);
                         } else {
                             // Alternators within groups are shown in the style of the (containing) group's depth
-                            output += openGroups.length ? groupStr("|", groupStyleDepth) : "<b>|</b>";
+                            output += openGroups.length ? groupStr("|", groupStyleDepth) : "<span class=\"b\">|</span>";
                         }
                         lastToken = {
                             quantifiable: false,
@@ -188,11 +188,11 @@ var highlightJsReSyntax;
                         };
                     // ^ or $ anchor
                     } else if ("^$".indexOf(m) > -1) {
-                        output += "<b>" + m + "</b>";
+                        output += "<span class=\"b\">" + m + "</span>";
                         lastToken = {quantifiable: false};
                     // Dot (.)
                     } else if (m === ".") {
-                        output += "<b>.</b>";
+                        output += "<span class=\"b\">.</span>";
                         lastToken = {quantifiable: true};
                     // Literal character sequence
                     } else {
@@ -238,11 +238,11 @@ var highlightJsReSyntax;
         };
 
     function errorStr (str) {
-        return '<b class="err">' + str + '</b>';
+        return '<span class="b err">' + str + '</span>';
     };
 
     function groupStr (str, depth) {
-        return '<b class="g' + depth + '">' + str + '</b>';
+        return '<span class="b g' + depth + '">' + str + '</span>';
     };
 
     function compressHtmlEntities (str) {
@@ -337,7 +337,7 @@ var highlightJsReSyntax;
                     lastToken = {rangeable: lastToken.type !== type.RANGE_HYPHEN};
                 // Metaclass (matches more than one character index)
                 } else if (/^\\[dsw]$/i.test(m)) {
-                    output += "<b>" + m + "</b>";
+                    output += "<span class=\"b\">" + m + "</span>";
                     // Traditional regex behavior is that a metaclass should be unrangeable
                     // (RegexPal terminology). Hence, [-\dz], [\d-z], and [z-\d] should all be
                     // equivalent. However, at least some browsers handle this inconsistently.
@@ -351,7 +351,7 @@ var highlightJsReSyntax;
                     output += errorStr(m);
                 // Metasequence representing a single character index, or escaped literal character
                 } else {
-                    output += "<b>" + expandHtmlEntities(m) + "</b>";
+                    output += "<span class=\"b\">" + expandHtmlEntities(m) + "</span>";
                     lastToken = {
                         rangeable: lastToken.type !== type.RANGE_HYPHEN,
                         charCode: getTokenCharCode(m)
@@ -375,7 +375,7 @@ var highlightJsReSyntax;
                             output += errorStr("-");
                         // Hyphen creating a valid range
                         } else {
-                            output += "<u>-</u>";
+                            output += "<span class=\"u\">-</span>";
                         }
                         lastToken = {
                             rangeable: false,
@@ -388,7 +388,7 @@ var highlightJsReSyntax;
                         // Hyphen at the end of an unclosed character class (i.e., the end of the regex)
                         } else {
                             //output += errorStr("-"); // Previous RB handling
-                            output += "<u>-</u>";
+                            output += "<span class=\"u\">-</span>";
                             break; // Might as well break
                         }
                     }

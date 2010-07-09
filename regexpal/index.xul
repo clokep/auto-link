@@ -39,7 +39,6 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<?xml-stylesheet href="./assets/regexpal.css" type="text/css"?>
 <?xml-stylesheet href="./jsresyntaxhighlighter.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
@@ -59,7 +58,7 @@
 				<!-- Replace with a panel? -->
 				<menupopup id="quickReference2">
 					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
-					<menuitem class="menuitem-iconic close" image="./assets/close.gif" label="Close Menu"/>
+					<menuitem label="Close Menu"/>
 					<menuseparator/>
 					<menuitem label=". Any character except newline."/>
 					<menuitem label="\. \* \\ etc.A period (and so on for \*, \(, \\, etc.)"/>
@@ -87,7 +86,7 @@
 			<menu id="blah" label="test">
 				<menupopup>
 					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
-					<menuitem class="menuitem-iconic close" image="./assets/close.gif" label="Close Menu"/>
+					<menuitem label="Close Menu"/>
 					<menuseparator/>
 						<hbox>
 							<label class="indent">
@@ -223,40 +222,25 @@
 
 		<hbox id="options">
 			<checkbox id="flagG" label="Global" checked="true"/>
-			<label class="flag" value="(g)"/>
+			<label class="plain monospace" value="(g)"/>
 			<checkbox id="flagI" label="Case insensitive" checked="true"/>
-			<label class="flag" value="(i)"/>
+			<label class="plain monospace" value="(i)"/>
 			<checkbox id="flagM" label="^$ match at line breaks" checked="false"/>
-			<label class="flag" value="(m)"/>
-			<checkbox id="flagS" label="Dot matches all" checked="false"/>
-			<label class="flag" value="(s"/>
-			<label class="plain" value=" via "/>
-			<label class="text-link plain" href="http://stevenlevithan.com/regex/xregexp/" value="XRegExp"/>
-			<label class="flag" value=")"/>
+			<label class="plain monospace" value="(m)"/>
 		</hbox>
 
 		<vbox id="body">
-			<stack orient="horizontal" id="search" class="smartField" flex="0">
-				<hbox id="bgs"><span class="plain monospace" style="background-color: red; width: 6ex;"></span><span class="plain monospace" style="background-color: blue; width: 3ex;"></span></hbox>
-				<textbox id="regex" class="plain monospace" tabindex="1" value="Enter regex here(\d+?).+" />
+			<stack id="search">
+				<textbox style="margin: 0;"/>
+				<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
+				<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
 			</stack>
-			<stack id="input" class="smartField" flex="1">
-				<hbox></hbox>
-				<textbox flex="1" tabindex="2" multiline="true" value="Enter test data here" />
+			<stack id="input" style="background-color: white; padding: 3px; border: 1px solid black;">
+				<hbox id="search_bg"></hbox>
+				<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
 			</stack>
 		</vbox>
 		
-		<hbox id="footer" flex="1">
-			<image src="./assets/regexpal.gif" alt="RegexPal"/>
-			<label href="http://regexpal.com" class="text-link">
-			<label class="header">Powered by: <span class="t1">Regex</span><span class="t2">Pal</span>
-			</label>
-			</label>
-		</hbox>
-
-		<!--<script type="application/javascript" src="./assets/xregexp.js"></script>
-		<script type="application/javascript" src="./assets/helpers.js"></script>
-		<script type="application/javascript" src="./assets/regexpal.js"></script>-->
 		<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
 		<script type="application/javascript" src="./runner.js"/>
 	</prefpane>
