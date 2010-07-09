@@ -61,7 +61,6 @@ var autoLink = {
 					// Well, just do nothing.
 					// Should probably throw an error
 				}
-				dump(prefs.getCharPref("rules"));
 
 				// See http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
 				let conversation = aObject._conv;
@@ -70,9 +69,9 @@ var autoLink = {
 					// Check that the user/room names & protocol are valid
 					if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
 						&& autoLink.inArray(conversation.account.name, rule.users)
-						&& autoLink.inArray(conversation.name, rule.rooms))
+						&& autoLink.inArray(conversation.name, rule.rooms)) {
 							// Add rule to current conversation
-							aObject.addTextModifier(autoLink.getLinkModifier(rule));
+							aObject.addTextModifier(autoLink.getLinkModifier(rule));}
 				}
 			}
 		},
@@ -143,21 +142,13 @@ var autoLink = {
 									 linkNode.setAttribute("class", "autoLink");
 
 									 // Split into two text nodes
-									 dump("Initial: " + aNode.data);
 									 let linkTextNode = aNode.splitText(offset);
-									 dump("Link: " + linkTextNode);
-									 dump("Before Link?: " + aNode.data);
 									 // Split the second node again
 									 aNode = linkTextNode.splitText(str.length);
 
 									 linkTextNode.parentNode.insertBefore(linkNode, linkTextNode);
 									 linkNode.appendChild(linkTextNode);
 									 
-									 dump(linkTextNode.data);
-									 dump(aNode.data);
-									 
-									 dump("here");
-
 									 result += 2;
 								 })
 						   );
