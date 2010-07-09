@@ -15,7 +15,7 @@
  - The Original Code is Auto-Link code.
  -
  - The Initial Developer of the Original Code is
- -   Patrick Cloke (clokep-at-gmail-dot-com)
+ -   Patrick Cloke (clokep@gmail.com)
  - Portions created by the Initial Developer are Copyright (C) 2007
  - the Initial Developer. All Rights Reserved.
  -
@@ -38,23 +38,32 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-<Description about="urn:mozilla:install-manifest">
+	<Description about="urn:mozilla:install-manifest">
+		<!-- Extension Information //-->
+		<em:id>auto-link@patrick.cloke</em:id>
+		<em:version>0.3b</em:version>
+		<em:type>2</em:type> <!-- Extension //-->
 
-	<em:id>auto-link@patrick.cloke</em:id>
-	<em:name>Auto Link</em:name>
-	<em:version>0.3pre</em:version>
-	<em:description>Converts a plain text pattern to hyperlinks of your choice.</em:description>
-	<em:creator>Benedikt P. (Link Bugzilla)</em:creator>
-	<em:developer>Patrick Cloke</em:developer>
-	<em:optionsURL>chrome://linkbugzilla/content/options.xul</em:optionsURL>
-	<!-- Instantbird -->
-	<em:targetApplication>
-		<Description>
-			<em:id>{33cb9019-c295-46dd-be21-8c4936574bee}</em:id>
-			<em:minVersion>0.2b2</em:minVersion>
-			<em:maxVersion>0.2pre</em:maxVersion>
-		</Description>
-	</em:targetApplication>
-</Description>
+		<!-- Front End MetaData //-->
+		<em:name>Auto Link</em:name>
+		<em:description>Converts a plain text pattern to hyperlinks of your choice.</em:description>
+		<em:creator>Patrick Cloke</em:creator>
+		<em:developer>Benedikt P. (original Link Bugzilla extension)</em:developer>
+		<em:homepageURL>http://code.google.com/p/auto-link/</em:homepageURL>
 
+		<!-- Internal References //-->
+		<!--<em:aboutURL>chrome://autolink/chrome/content/about.xul</em:aboutURL>//-->
+		<!--<em:iconURL>chrome://autolink/chrome/content/thundershows.png</em:iconURL>//-->
+		<!--<em:optionsURL>chrome://autolink/chrome/content/options.xul</em:optionsURL>//-->
+
+		<!-- Target Applications //-->
+		<em:targetApplication>
+			<Description>
+				<!-- Instantbird -->
+				<em:id>{33cb9019-c295-46dd-be21-8c4936574bee}</em:id>
+				<em:minVersion>0.2b2</em:minVersion>
+				<em:maxVersion>0.2pre</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+	</Description>
 </RDF>
