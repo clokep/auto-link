@@ -40,15 +40,18 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<?xml-stylesheet href="./jsresyntaxhighlighter.css" type="text/css"?>
+<?xml-stylesheet href="../../jsresyntaxhighlighter/jsresyntaxhighlighter.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
-            title="Link Bugzilla Options"
+            title="Auto Link Options"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <prefpane id="autoLink-pane">
 	<!--<script type="application/javascript" src="chrome://autolink/content/options.js"/>//-->
 	<script type="application/javascript" src="options.js"/>
+	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
+	<script type="application/javascript" src="../../jsresyntaxhighlighter/jsresyntaxhighlighter.js"/>
+
     <preferences id="linkbugzilla-preferences">
       <preference id="pref_bugzilla_server_url"
                   name="extensions.linkbugzilla.bugzilla_server_url"
@@ -58,41 +61,22 @@
                   type="string"/>
     </preferences>
 
-	<popupset>
-		<menupopup id="clipmenu" onpopupshowing="return openPopup(event);" onpopuphiding="return closePopup(event);">
-			<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
-			<menuseparator/>
-			<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
-			<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
-			<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>
-			<menuseparator/>
-			<menuitem label="Close"/>
-		</menupopup>
-	</popupset>
+		<popupset>
+			<menupopup id="clipmenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
+				<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+				<menuseparator/>
+				<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
+				<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
+				<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>
+				<menuseparator/>
+				<menuitem label="Close"/>
+			</menupopup>
+		</popupset>
 
-    <!--<vbox>
-      <label value="URL of the bugtracker that you would like to use. The bug-id will be appended at the end, therefore make '&id=' the last parameter."
-             control="serverURL"/>
-      <spacer flex="1"/>
-      <textbox id="serverURL" size= "50"
-               preference="pref_bugzilla_server_url"/>
-      <spacer flex="1"/>
-      <label value="'Pretty server name', displayed on the tooltip of the link"
-             control="serverPrettyName" />
-      <spacer flex="1"/>
-      <textbox id="serverPrettyName" size= "50"
-               preference="pref_server_pretty_name"/>
-    </vbox>//-->
-
-	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
-	<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
-	<script type="application/javascript" src="./runner.js"/>
-
-  <prefpane id="autoLink-pane">
 		<menubar id="options">
 			<menu id="options-menu" label="Options">
 				<menupopup id="optionsDropdown">
-					<menuitem id="highlightSyntax" type="checkbox" checked="true" label="Highlight regex syntax"/>
+					<menuitem id="highlightSyntax" type="checkbox" checked="true" label="Highlight regex syntax" oncommand="parse();"/>
 					<menuitem id="highlightMatches" type="checkbox" checked="true" label="Highlight matches"/>
 					<menuitem id="invertMatches" type="checkbox" label="Invert results"/>
 				</menupopup>
@@ -263,15 +247,17 @@
 			</menu>
 		</menubar>
 
-		<label value="Right click for popup" popup="clipmenu"/>
+		<label value="Right click for popup" context="clipmenu"/>
 		
 		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
 			<treecols>
 				<treecol id="sender" label="Sender" flex="1"/>
+				<splitter/>
 				<treecol id="protocol" label="Protocol" flex="2"/>
 			</treecols>
 
-			<treechildren popup="clipmenu">
+			<treechildren popup="clipmenu"/>
+			<!--<treechildren popup="clipmenu">
 				<treeitem>
 					<treerow>
 						<treecell label="joe@somewhere.com"/>
@@ -284,10 +270,10 @@
 						<treecell label="Let's do lunch" editable="false"/>
 					</treerow>
 				</treeitem>
-			</treechildren>
+			</treechildren>-->
 		</tree>
-		
-				<hbox>
+
+		<hbox>
 			<label value="Global" command="flags"/>
 			<textbox id="flags"/>
 		</hbox>

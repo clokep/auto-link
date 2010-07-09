@@ -36,18 +36,16 @@
 
 var protocols = ["prpl-aim", "prpl-msn", "prpl-ymsgr"];
 
-function openPopup(event) {
+function doShowPopup(event) {
 	// See https://developer.mozilla.org/en/XUL/menupopup
 	let treeElement = event.rangeParent;
   let row = new Object();
   let col = new Object();
   let treeCell = new Object();
-  
   treeElement.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, treeCell)
 
-  if (col.value.id == "protocol") {
+  if (col.value.id != "protocol")
 		return false; // prevent popup from appearing
-	}
 	
 	let ruleProtocols = JSON.parse(treeCell.value);
 	let menu = document.getElementById("clipmenu");
@@ -64,24 +62,28 @@ function closePopup(event) {
 	for each (var protocol in protocols) {
 		let menuitem = document.getElementById("clipmenu");
 		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.checked});
-		popup.checked = false; // Reset
+		//popup.checked = false; // Reset
 	}
 	treeCell.value = JSON.stringify(ruleProtocols);
 }
 
 function parse() {
-	var regex = document.getElementById("regex"),
-			text = regex.value,
-			regex_bg = document.getElementById("regex_bg");
+	let regex_bg = document.getElementById("regex_bg");
+	// Remove all current children
+	while (regex_bg.childNodes.length >= 1 )
+		regex_bg.removeChild(regex_bg.firstChild);
+
+	// If we don't want syntax highlight then don't do any
+	if (!document.getElementById("highlightSyntax").hasAttribute("checked"))
+		return;
+
+	let regex = document.getElementById("regex");
+	let text = regex.value;
 	
 	// From http://jszen.blogspot.com/2007/02/how-to-parse-html-strings-into-dom.html
 	var range = document.createRange();
 	range.selectNode(regex);
 	var doc = range.createContextualFragment("<span class=\"regex\">" + highlightJsReSyntax(text) + "</span>");
-
-	// Remove all current children
-	while (regex_bg.childNodes.length >= 1 )
-		regex_bg.removeChild(regex_bg.firstChild);       
 
 	// Replace with new children
 	for (var i = 0; i < doc.childNodes.length; i++) {
@@ -89,4 +91,28 @@ function parse() {
 	}
 }
 
-window.addEventListener("load", function(e) { parse(); }, false);
+var treeView = {
+	rowCount : 10000,
+	getCellText : function(row,column){
+		if (column.id != "protocol")
+			return "Row "+row;
+		else
+			return "February 18";
+	},
+	setTree: function(treebox){ this.treebox = treebox; },
+	isContainer: function(row){ return false; },
+	isSeparator: function(row){ return false; },
+	isSorted: function(){ return false; },
+	getLevel: function(row){ return 0; },
+	getImageSrc: function(row,col){ return null; },
+	getRowProperties: function(row,props){},
+	getCellProperties: function(row,col,props){},
+	getColumnProperties: function(colid,col,props){}
+};
+
+window.addEventListener("load",
+												(function(e) {
+													parse();
+													document.getElementById('thetree').view = treeView;
+												}),
+												false);
