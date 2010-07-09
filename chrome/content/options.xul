@@ -20,7 +20,9 @@
  - the Initial Developer. All Rights Reserved.
  -
  - Contributor(s):
- -   Patrick Cloke (clokep@gmail.com)
+ -   Patrick Cloke <clokep@gmail.com>
+ -   Based on work by Steven Levithan <stevenlevithan.com>
+ -     RegexPal 0.1.4c, (c) 2007-2008 (GNU LGPL 3.0 license)
  -
  - Alternatively, the contents of this file may be used under the terms of
  - either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -38,6 +40,7 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
+<?xml-stylesheet href="./jsresyntaxhighlighter.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
             title="Link Bugzilla Options"
@@ -81,29 +84,225 @@
                preference="pref_server_pretty_name"/>
     </vbox>//-->
 
+	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
+	<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
+	<script type="application/javascript" src="./runner.js"/>
+
+  <prefpane id="autoLink-pane">
+		<menubar id="options">
+			<menu id="options-menu" label="Options">
+				<menupopup id="optionsDropdown">
+					<menuitem id="highlightSyntax" type="checkbox" checked="true" label="Highlight regex syntax"/>
+					<menuitem id="highlightMatches" type="checkbox" checked="true" label="Highlight matches"/>
+					<menuitem id="invertMatches" type="checkbox" label="Invert results"/>
+				</menupopup>
+			</menu>
+			<menu id="quickReferenceDropdown" label="JavaScript Regex Quick Reference">
+				<!-- Replace with a panel? -->
+				<menupopup id="quickReference2">
+					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
+					<menuitem label="Close Menu"/>
+					<menuseparator/>
+					<menuitem label=". Any character except newline."/>
+					<menuitem label="\. \* \\ etc.A period (and so on for \*, \(, \\, etc.)"/>
+					<menuitem label="^ The start of the string."/>
+					<menuitem label="$ The end of the string."/>
+					<menuitem label="\\d \\w \\s A digit, word character [A-Za-z0-9_], or whitespace."/>
+					<menuitem label="\\D \\W \\S Anything except a digit, word character, or whitespace."/>
+					<menuitem label="[abc] Character a, b, or c."/>
+					<menuitem label="[a-z] a through z."/>
+					<menuitem label="[^abc] Any character except a, b, or c."/>
+					<menuitem label="aa|bb Either aa or bb."/>
+					<menuitem label="? Zero or one of the preceding element."/>
+					<menuitem label="* Zero or more of the preceding element."/>
+					<menuitem label="+ One or more of the preceding element."/>
+					<menuitem label="{m} Exactly m of the preceding element."/>
+					<menuitem label="{m,} m or more of the preceding element."/>
+					<menuitem label="{m,n} Between m and n of the preceding element."/>
+					<menuitem label="?? *? +? {m} etc. Same as above, but as few times as possible."/>
+					<menuitem label="(expr) Capture expr for use with \1 or $1, etc."/>
+					<menuitem label="(?:expr) Non-capturing group."/>
+					<menuitem label="(?=expr) Followed by expr."/>
+					<menuitem label="(?!expr) Not followed by expr."/>
+				</menupopup>
+			</menu>
+			<menu id="blah" label="test">
+				<menupopup>
+					<menuitem label="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
+					<menuitem label="Close Menu"/>
+					<menuseparator/>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">.</label>
+							</label>
+							<label>Any character except newline.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">\.</label>
+							</label>
+							<label>A period (and so on for
+								<label class="plain monospace">\*</label>, <label class="plain monospace">\(</label>, <label class="plain monospace">\\</label>, etc.)
+							</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">^</label>
+							</label>
+							<label>The start of the string.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">$</label>
+							</label>
+							<label>The end of the string.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">\d</label>,<label class="plain monospace">\w</label>,<label class="plain monospace">\s</label>
+							</label>
+							<label>A digit, word character <label class="plain monospace">[A-Za-z0-9_]</label>, or whitespace.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">\D</label>,<label class="plain monospace">\W</label>,<label class="plain monospace">\S</label>
+							</label>
+							<label>Anything except a digit, word character, or whitespace.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">[abc]</label>
+							</label>
+							<label>Character a, b, or c.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">[a-z]</label>
+							</label>
+							<label>a through z.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">[^abc]</label>
+							</label>
+							<label>Any character except a, b, or c.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">aa|bb</label>
+							</label>
+							<label>Either aa or bb.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">?</label>
+							</label>
+							<label>Zero or one of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">*</label>
+							</label>
+							<label>Zero or more of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">+</label>
+							</label>
+							<label>One or more of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">{<label class="plain em">n</label>}</label>
+							</label>
+							<label>Exactly <label class="plain em">n</label> of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">{<label class="plain em">n</label>,}</label>
+							</label>
+							<label><label class="plain em">n</label> or more of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">{<label class="plain em">m</label>,<label class="plain em">n</label>}</label>
+							</label>
+							<label>Between <label class="plain em">m</label> and <label class="plain em">n</label> of the preceding element.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">??</label>,<label class="plain monospace">*?</label>,<label class="plain monospace">+?</label>,<label class="plain monospace">{<label class="plain em">n</label>}?</label>, etc.
+							</label>
+							<label>Same as above, but as few times as possible.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">(</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+							</label>
+							<label>Capture <label class="plain em">expr</label> for use with <label class="plain monospace">\1</label>, etc.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">(?:</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+							</label>
+							<label>Non-capturing group.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">(?=</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+							</label>
+							<label>Followed by <label class="plain em">expr</label>.</label>
+						</hbox>
+						<hbox>
+							<label class="indent">
+								<label class="plain monospace">(?!</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+							</label>
+							<label>Not followed by <label class="plain em">expr</label>.</label>
+						</hbox>
+				</menupopup>
+			</menu>
+		</menubar>
+
 		<label value="Right click for popup" popup="clipmenu"/>
 		
-	 <tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true"> 
-		 <treecols>
-			 <treecol id="sender" label="Sender" flex="1"/>  
-			 <treecol id="protocol" label="Protocol" flex="2"/>  
-		 </treecols>
+		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
+			<treecols>
+				<treecol id="sender" label="Sender" flex="1"/>
+				<treecol id="protocol" label="Protocol" flex="2"/>
+			</treecols>
 
-		 <treechildren popup="clipmenu">  
-			 <treeitem>  
-				 <treerow>  
-					 <treecell label="joe@somewhere.com"/>  
-					 <treecell label="Top secret plans" editable="false"/>  
-				 </treerow>  
-			 </treeitem>  
-			 <treeitem>  
-				 <treerow>  
-					 <treecell label="mel@whereever.com"/>  
-					 <treecell label="Let's do lunch" editable="false"/>  
-				 </treerow>  
-			 </treeitem>  
-		 </treechildren>
-	 </tree> 
+			<treechildren popup="clipmenu">
+				<treeitem>
+					<treerow>
+						<treecell label="joe@somewhere.com"/>
+						<treecell label="Top secret plans" editable="false"/>
+					</treerow>
+				</treeitem>
+				<treeitem>
+					<treerow>
+						<treecell label="mel@whereever.com"/>
+						<treecell label="Let's do lunch" editable="false"/>
+					</treerow>
+				</treeitem>
+			</treechildren>
+		</tree>
+		
+				<hbox>
+			<label value="Global" command="flags"/>
+			<textbox id="flags"/>
+		</hbox>
+
+		<vbox>
+			<stack>
+				<textbox style="margin: 0;"/>
+				<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
+				<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
+			</stack>
+			<stack style="background-color: white; padding: 3px; border: 1px solid black;">
+				<hbox id="search_bg"></hbox>
+				<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
+			</stack>
+		</vbox>
 
   </prefpane>
 </prefwindow>
