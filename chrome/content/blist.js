@@ -71,7 +71,8 @@ var autoLink = {
 						&& autoLink.inArray(conversation.account.name, rule.users)
 						&& autoLink.inArray(conversation.name, rule.rooms)) {
 							// Add rule to current conversation
-							aObject.addTextModifier(autoLink.getLinkModifier(rule));}
+							aObject.addTextModifier(autoLink.getLinkModifier(rule));
+					}
 				}
 			}
 		},

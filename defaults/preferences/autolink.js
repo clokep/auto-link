@@ -20,7 +20,7 @@
 					{
 						"pattern" : "bug (\\d+)",
 						"flags" : "gi",
-						"link" : "http://bugzilla.songbirdnest.com/show_bug.cgi?id=id=$1",
+						"link" : "http://bugzilla.songbirdnest.com/show_bug.cgi?id=$1",
 						"title" : "Bug $1 @ bugzilla.songbirdnest.com",
 						"protocols" : ["prpl-irc"],
 						"users" : [".+"],
