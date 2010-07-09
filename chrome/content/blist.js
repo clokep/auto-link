@@ -67,7 +67,7 @@ var autoLink = {
 				// Loop over each ruleset
 				for each (var rule in rules) {
 					// Check that the user/room names & protocol are valid
-					if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
+					if (autoLink.inArray(conversation.account.protocol.id, rule.protocols)
 						&& autoLink.inArray(conversation.account.name, rule.users)
 						&& autoLink.inArray(conversation.name, rule.rooms)) {
 							// Add rule to current conversation
