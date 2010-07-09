@@ -83,7 +83,7 @@ var autoLink = {
 						"rooms" : [".+"]
 					},
 					{
-						"pattern" : "bug (\\d+)",
+						"pattern" : "bug s(\\d+)",
 						"flags" : "gi",
 						"link" : "https://bugzilla.instantbird.org/show_bug.cgi?id=$1",
 						"title" : "Bug $1 @ bugzilla.mozilla.org",
@@ -125,14 +125,11 @@ var autoLink = {
 	// This will convert between "some string $1" to "some string " + matches[0]
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
 		return aString.replace(/\$&/gi, aMatchedString)
-					   .replace(/\$(\d+)/gi,
+					  .replace(/\$(\d+)/gi,
 								(function(str, p1, offset, s) {
-									if (parseInt(p1) < matches.length)
-										return s.slice(0,offset)
-												+ arrMatches[parseInt(p1) - 1]
-												+ s.slice(offset + str.length);
-									else
-										return s; // Treat it as literal and return
+									if (parseInt(p1) <= arrMatches.length)
+										return arrMatches[parseInt(p1) - 1];
+									return str; // Treat it as literal and return
 								})
 						);
 	},
@@ -156,35 +153,36 @@ var autoLink = {
 							 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
 							 (function() {
 								 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
-								 let str = arguments[0];
-								 let offset = arguments[capturingGroups + 1];
-								 let s = arguments[capturingGroups + 2];
+								 let str = arguments[0]; // Matching string
+								 let offset = arguments[capturingGroups + 1]; // Offset of start of match
+								 let s = arguments[capturingGroups + 2]; // The original string passed
 								 let matches = [];
 								 if (capturingGroups > 0) {
 									 // See https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-									 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups);
+									 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups); // Each capturing group
 								 }
+								//dump(aNode);
+								//dump(aNode.ownerDocument.namespaceURI);
+								let linkNode = this.document.createElement('a');
+								aNode.ownerDocument.adoptNode(linkNode);
+								//dump(linkNode.ownerDocument == aNode.ownerDocument);
+								//dump(aNode.ownerDocument.createElementNS(null,'html:a'));
+								 
+								 //let linkNode = aNode.ownerDocument.createElement("a");
+								 //dump(rule.link + "\n" + str + "\n" + matches);
+								 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
+								 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
+								 linkNode.setAttribute("class", "autoLink");
 
 								// Split into two text nodes
 								 let autoLinkNode = aNode.splitText(offset);
 								 // Split the second node again
 								 aNode = autoLinkNode.splitText(str.length);
-								 /*dump(aNode.toSource());
-								 dump(aNode.ownerDocument.toSource());
-								 dump(aNode.ownerDocument.wrappedJSObject.toSource());
-								 dump(aNode.ownerDocument.wrappedJSObject.createElement("a"));*/
-								 let linkNode = aNode.ownerDocument.wrappedJSObject.createElement("a");
-								 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
-								 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
-								 linkNode.setAttribute("class", "ib-bug-link");
 
-								 dump("Here");
-								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode); dump("1");
-								 linkNode.appendChild(autoLinkNode);dump("5");
+								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode);
+								 linkNode.appendChild(autoLinkNode);
 
 								 result += 2;
-								 dump(result);
-								 //dump(aNode.data);
 							 })
 			 );
 			return result;
