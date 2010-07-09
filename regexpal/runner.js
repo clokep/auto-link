@@ -2,7 +2,8 @@ function parse() {
 	var regex = document.getElementById("regex"),
 			text = regex.value,
 			regex_bg = document.getElementById("regex_bg");
-			
+	
+	// From http://jszen.blogspot.com/2007/02/how-to-parse-html-strings-into-dom.html
 	var range = document.createRange();
 	range.selectNode(regex);
 	var doc = range.createContextualFragment("<span class=\"regex\">" + highlightJsReSyntax(text) + "</span>");
@@ -18,4 +19,3 @@ function parse() {
 }
 
 window.addEventListener("load", function(e) {parse();}, false);
-

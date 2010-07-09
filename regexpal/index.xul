@@ -44,6 +44,9 @@
 <prefwindow id="autoLink-prefwindow"
             title="Regex Tester - RegexPal"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
+	<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
+	<script type="application/javascript" src="./runner.js"/>
 
   <prefpane id="autoLink-pane">
 		<menubar id="options">
@@ -220,28 +223,21 @@
 			</menu>
 		</menubar>
 
-		<hbox id="options">
-			<checkbox id="flagG" label="Global" checked="true"/>
-			<label class="plain monospace" value="(g)"/>
-			<checkbox id="flagI" label="Case insensitive" checked="true"/>
-			<label class="plain monospace" value="(i)"/>
-			<checkbox id="flagM" label="^$ match at line breaks" checked="false"/>
-			<label class="plain monospace" value="(m)"/>
+		<hbox>
+			<label value="Global" command="flags"/>
+			<textbox id="flags"/>
 		</hbox>
 
-		<vbox id="body">
-			<stack id="search">
+		<vbox>
+			<stack>
 				<textbox style="margin: 0;"/>
 				<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
 				<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
 			</stack>
-			<stack id="input" style="background-color: white; padding: 3px; border: 1px solid black;">
+			<stack style="background-color: white; padding: 3px; border: 1px solid black;">
 				<hbox id="search_bg"></hbox>
 				<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
 			</stack>
 		</vbox>
-		
-		<script type="application/javascript" src="./jsresyntaxhighlighter.js"/>
-		<script type="application/javascript" src="./runner.js"/>
 	</prefpane>
 </prefwindow>
