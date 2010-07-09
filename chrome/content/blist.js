@@ -61,46 +61,16 @@ var autoLink = {
 					// Well, just do nothing.
 					// Should probably throw an error
 				}
-				
-				// REMOVE ME
-				rules = [
-					{
-						"pattern" : "bug (\\d+)",
-						"flags" : "gi",
-						"link" : "https://bugzilla.mozilla.org/show_bug.cgi?id=$1",
-						"title" : "Bug $1 @ bugzilla.mozilla.org",
-						"protocols" : ["prpl-irc"],
-						"users" : ["clokep","clokep_work"],
-						"rooms" : ["#[^(instant|song)bird]"]
-					},
-					{
-						"pattern" : "(test (\\d+))",
-						"flags" : "gi",
-						"link" : "https://google.com/$2/$1",
-						"title" : "Bug $1 @ $2",
-						"protocols" : [".+"],
-						"users" : [".+"],
-						"rooms" : [".+"]
-					},
-					{
-						"pattern" : "bug s(\\d+)",
-						"flags" : "gi",
-						"link" : "https://bugzilla.instantbird.org/show_bug.cgi?id=$1",
-						"title" : "Bug $1 @ bugzilla.mozilla.org",
-						"protocols" : ["prpl-irc"],
-						"users" : [".+"],
-						"rooms" : ["#instantbird"]
-					}
-				];
+				dump(prefs.getCharPref("rules"));
 
 				// See http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
 				let conversation = aObject._conv;
 				// Loop over each ruleset
 				for each (var rule in rules) {
 					// Check that the user/room names & protocol are valid
-					/*if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
+					if (autoLink.inArray(conversation.account.protocol.name, rule.protocols)
 						&& autoLink.inArray(conversation.account.name, rule.users)
-						&& autoLink.inArray(conversation.name, rule.rooms))*/
+						&& autoLink.inArray(conversation.name, rule.rooms))
 							// Add rule to current conversation
 							aObject.addTextModifier(autoLink.getLinkModifier(rule));
 				}
@@ -149,42 +119,49 @@ var autoLink = {
 					i++; // Skip the next char
 
 			let result = 0;
-			aNode.data.replace(expression,
-							 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
-							 (function() {
-								 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
-								 let str = arguments[0]; // Matching string
-								 let offset = arguments[capturingGroups + 1]; // Offset of start of match
-								 let s = arguments[capturingGroups + 2]; // The original string passed
-								 let matches = [];
-								 if (capturingGroups > 0) {
-									 // See https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
-									 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups); // Each capturing group
-								 }
-								//dump(aNode);
-								//dump(aNode.ownerDocument.namespaceURI);
-								let linkNode = this.document.createElement('a');
-								aNode.ownerDocument.adoptNode(linkNode);
-								//dump(linkNode.ownerDocument == aNode.ownerDocument);
-								//dump(aNode.ownerDocument.createElementNS(null,'html:a'));
-								 
-								 //let linkNode = aNode.ownerDocument.createElement("a");
-								 //dump(rule.link + "\n" + str + "\n" + matches);
-								 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
-								 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
-								 linkNode.setAttribute("class", "autoLink");
+			while (expression(aNode.data)) {
+				aNode.data.replace(expression,
+								 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
+								 (function() {
+									 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
+									 let str = arguments[0]; // Matching string
+									 let offset = arguments[capturingGroups + 1]; // Offset of start of match
+									 let s = arguments[capturingGroups + 2]; // The original string passed
+									 let matches = [];
+									 if (capturingGroups > 0) {
+										 // See https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Functions_and_function_scope/arguments
+										 matches = Array.prototype.slice.call(arguments).slice(1,1 + capturingGroups); // Each capturing group
+									 }
 
-								// Split into two text nodes
-								 let autoLinkNode = aNode.splitText(offset);
-								 // Split the second node again
-								 aNode = autoLinkNode.splitText(str.length);
+									 // For some reason aNode.ownerDocument won't
+									 // create any 'a' elements. Hack around it.
+									 let linkNode = this.document.createElement('a');
+									 aNode.ownerDocument.adoptNode(linkNode);
 
-								 autoLinkNode.parentNode.insertBefore(linkNode, autoLinkNode);
-								 linkNode.appendChild(autoLinkNode);
+									 linkNode.setAttribute("href", autoLink.convertRegexMatch(rule.link, str, matches));
+									 linkNode.setAttribute("title", autoLink.convertRegexMatch(rule.title, str, matches));
+									 linkNode.setAttribute("class", "autoLink");
 
-								 result += 2;
-							 })
-			 );
+									 // Split into two text nodes
+									 dump("Initial: " + aNode.data);
+									 let linkTextNode = aNode.splitText(offset);
+									 dump("Link: " + linkTextNode);
+									 dump("Before Link?: " + aNode.data);
+									 // Split the second node again
+									 aNode = linkTextNode.splitText(str.length);
+
+									 linkTextNode.parentNode.insertBefore(linkNode, linkTextNode);
+									 linkNode.appendChild(linkTextNode);
+									 
+									 dump(linkTextNode.data);
+									 dump(aNode.data);
+									 
+									 dump("here");
+
+									 result += 2;
+								 })
+						   );
+				}
 			return result;
 		});
 	}
