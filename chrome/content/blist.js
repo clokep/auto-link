@@ -100,7 +100,7 @@ var autoLink = {
 									if (parseInt(p1) <= arrMatches.length)
 										return arrMatches[parseInt(p1) - 1];
 									else if (p1.length > arrMatches.length.toString().length) {
-										return arrMatches[parseInt(p1.slice(0,arrMatches.length.toString().length) - 1]
+										return arrMatches[parseInt(p1.slice(0,arrMatches.length.toString().length) - 1)]
 											   + p1.slice(arrMatches.length.toString().length);
 									}
 									return str; // Treat it as literal and return
