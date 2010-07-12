@@ -34,22 +34,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var supportProtocols = [];
-function loadSupportedProtocols() {
-	alert("Start");
-	var pcs = Components.classes["@instantbird.org/purple/core;1"]
-				 .getService(Ci.purpleICoreService);
-	var protos = [];
-	alert("Load");
-	for (let proto in getIter(pcs.getProtocols()))
-	  protos.push(proto);
-	protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-	protos.forEach(function(proto) {
-	  supportProtocols.push(proto.id);
-	});
-	
-	dump(supportProtocols.toSource());
-}
+var protocols = ["prpl-aim", "prpl-msn", "prpl-ymsgr"];
 
 function doShowPopup(event) {
 	// See https://developer.mozilla.org/en/XUL/menupopup
@@ -64,7 +49,7 @@ function doShowPopup(event) {
 	
 	let ruleProtocols = JSON.parse(treeCell.value);
 	let menu = document.getElementById("clipmenu");
-	for each (var protocol in supportedProtocols)
+	for each (var protocol in protocols)
 		menu.getElementById(protocol.name).checked = protocol.checked;
 }
 
@@ -74,7 +59,7 @@ function closePopup(event) {
 	let treeCell = treeElement.currentIndex;
 
   let ruleProtocols = [];
-	for each (var protocol in supportedProtocols) {
+	for each (var protocol in protocols) {
 		let menuitem = document.getElementById("clipmenu");
 		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.checked});
 		//popup.checked = false; // Reset
@@ -126,9 +111,8 @@ var treeView = {
 };
 
 window.addEventListener("load",
-						(function(e) {
-							loadSupportedProtocols();
-							parse();
-							//document.getElementById('thetree').view = treeView;
-						}),
-						false);
+												(function(e) {
+													parse();
+													document.getElementById('thetree').view = treeView;
+												}),
+												false);
