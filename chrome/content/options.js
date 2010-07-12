@@ -15,7 +15,7 @@
  *
  * The Initial Developer of the Original Code is
  * Patrick Cloke (clokep@gmail.com).
- * Portions created by the Initial Developer are Copyright (C) 2009
+ * Portions created by the Initial Developer are Copyright (C) 2010
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -42,10 +42,10 @@ function loadSupportedProtocols() {
 	var protos = [];
 	alert("Load");
 	for (let proto in getIter(pcs.getProtocols()))
-	  protos.push(proto);
+		protos.push(proto);
 	protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 	protos.forEach(function(proto) {
-	  supportProtocols.push(proto.id);
+		supportProtocols.push(proto.id);
 	});
 	
 	dump(supportProtocols.toSource());
@@ -127,7 +127,7 @@ var treeView = {
 
 window.addEventListener("load",
 						(function(e) {
-							loadSupportedProtocols();
+							//loadSupportedProtocols();
 							parse();
 							//document.getElementById('thetree').view = treeView;
 						}),

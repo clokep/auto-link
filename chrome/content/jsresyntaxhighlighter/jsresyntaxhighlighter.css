@@ -1,3 +1,15 @@
+/* JavaScript Regex Syntax Highlighter 0.1
+ * (c) 2010 Steven Levithan <http://stevenlevithan.com>
+ * MIT license
+ *
+ * Based on RegexPal 0.1.4
+ * (c) 2007 Steven Levithan <http://regexpal.com>
+ * GNU LGPL 3.0 license
+ *
+ * Updated to work with XUL
+ * Patrick Cloke (clokep@gmail.com), 2010
+ */
+
 .regex {font-family: Monospace;}
 .regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
 .regex .b {background-color: #aad1f7;}
@@ -10,3 +22,4 @@
 .regex .b.g4 {background-color: #54b70b;}
 .regex .b.g5 {background-color: #b688cf;}
 .regex .b.err {background-color: #ff4300;}
+

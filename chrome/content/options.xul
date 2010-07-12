@@ -12,15 +12,14 @@
  - for the specific language governing rights and limitations under the
  - License.
  -
- - The Original Code is the Link Bugzilla	Instantbird add-on, released 2009
+ - The Original Code is the Auto Link code.
  -
  - The Initial Developer of the Original Code is
- - Benedikt P. <leeraccount@yahoo.de>.
- - Portions created by the Initial Developer are Copyright (C) 2009
+ - Patrick Cloke <clokep@gmail.com>.
+ - Portions created by the Initial Developer are Copyright (C) 2010
  - the Initial Developer. All Rights Reserved.
  -
  - Contributor(s):
- -   Patrick Cloke <clokep@gmail.com>
  -   Based on work by Steven Levithan <stevenlevithan.com>
  -     RegexPal 0.1.4c, (c) 2007-2008 (GNU LGPL 3.0 license)
  -
@@ -47,8 +46,7 @@
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <prefpane id="autoLink-pane">
-	<!--<script type="application/javascript" src="chrome://autolink/content/options.js"/>//-->
-	<script type="application/javascript" src="options.js"/>
+	<script type="application/javascript" src="chrome://autolink/content/options.js"/>
 	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
 	<script type="application/javascript" src="./jsresyntaxhighlighter/jsresyntaxhighlighter.js"/>
 
@@ -252,25 +250,35 @@
 		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
 			<treecols>
 				<treecol id="sender" label="Sender" flex="1"/>
-				<splitter/>
+				<splitter class="tree-splitter"/>
+				<treecol id="global" label="g" type="checkbox" editable="true" fixed="true"/>
+				<treecol id="caseInsensitive" label="i" type="checkbox" editable="true" fixed="true"/>
+				<treecol id="multiline" label="m" type="checkbox" editable="true" fixed="true"/>
+				<splitter class="tree-splitter"/>
 				<treecol id="protocol" label="Protocol" flex="2"/>
 			</treecols>
 
-			<treechildren popup="clipmenu"/>
-			<!--<treechildren popup="clipmenu">
+			<!--<treechildren popup="clipmenu"/>-->
+			<treechildren popup="clipmenu">
 				<treeitem>
 					<treerow>
 						<treecell label="joe@somewhere.com"/>
+						<treecell value="true"/>
+						<treecell value="true"/>
+						<treecell value="false"/>
 						<treecell label="Top secret plans" editable="false"/>
 					</treerow>
 				</treeitem>
 				<treeitem>
 					<treerow>
 						<treecell label="mel@whereever.com"/>
+						<treecell value="true"/>
+						<treecell value="true"/>
+						<treecell value="false"/>
 						<treecell label="Let's do lunch" editable="false"/>
 					</treerow>
 				</treeitem>
-			</treechildren>-->
+			</treechildren>
 		</tree>
 
 		<hbox>

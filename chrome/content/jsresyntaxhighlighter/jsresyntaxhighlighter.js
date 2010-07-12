@@ -6,20 +6,23 @@
 // (c) 2007 Steven Levithan <http://regexpal.com>
 // GNU LGPL 3.0 license
 
+// Updated to work with XUL
+// Patrick Cloke (clokep@gmail.com), 2010
+
 // This relies on the following CSS for highlighting:
 /*
 .regex {font-family: Monospace;}
-.regex b, .regex i, .regex u {font-weight: normal; font-style: normal; text-decoration: none;}
-.regex b {background: #aad1f7;}
-.regex i {background: #f9ca69;}
-.regex i b {background: #f7a700;}
-.regex i u {background: #efba4a;}
-.regex b.g1 {background: #d2f854;}
-.regex b.g2 {background: #9ec70c;}
-.regex b.g3 {background: #ecc9f7;}
-.regex b.g4 {background: #54b70b;}
-.regex b.g5 {background: #b688cf;}
-.regex b.err {background: #ff4300;}
+.regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
+.regex .b {background: #aad1f7;}
+.regex .i {background: #f9ca69;}
+.regex .i .b {background: #f7a700;}
+.regex .i .u {background: #efba4a;}
+.regex .b.g1 {background: #d2f854;}
+.regex .b.g2 {background: #9ec70c;}
+.regex .b.g3 {background: #ecc9f7;}
+.regex .b.g4 {background: #54b70b;}
+.regex .b.g5 {background: #b688cf;}
+.regex .b.err {background: #ff4300;}
 */
 
 var highlightJsReSyntax;
