@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
@@ -34,52 +34,72 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-var supportProtocols = [];
+function dump(aMessage) {
+	var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
+									 .getService(Components.interfaces.nsIConsoleService);
+	consoleService.logStringMessage("Auto-Link: " + aMessage);
+}
+
+var supportedProtocols = [];
 function loadSupportedProtocols() {
-	alert("Start");
-	var pcs = Components.classes["@instantbird.org/purple/core;1"]
+	var parentNode = document.getElementById("prplMenu");
+	var endNode = document.getElementById("prplMenuSep2");
+
+	var pcs = Cc["@instantbird.org/purple/core;1"]
 				 .getService(Ci.purpleICoreService);
+
 	var protos = [];
-	alert("Load");
-	for (let proto in getIter(pcs.getProtocols()))
+	for (var proto in getIter(pcs.getProtocols())) {
 		protos.push(proto);
+	}
 	protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 	protos.forEach(function(proto) {
-		supportProtocols.push(proto.id);
+		supportedProtocols.push([proto.id, proto.name]);
+
+		let menuitem = document.createElement("menuitem");
+		menuitem.setAttribute("label", proto.name);
+		menuitem.setAttribute("id", proto.id);
+		menuitem.setAttribute("type", "checkbox");
+		menuitem.setAttribute("closemenu", "none");
+		parentNode.insertBefore(menuitem, endNode);
 	});
-	
-	dump(supportProtocols.toSource());
 }
 
 function doShowPopup(event) {
 	// See https://developer.mozilla.org/en/XUL/menupopup
 	let treeElement = event.rangeParent;
-  let row = new Object();
-  let col = new Object();
-  let treeCell = new Object();
-  treeElement.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, treeCell)
+	let row = new Object();
+	let col = new Object();
+	let treeCell = new Object();
+	treeElement.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, treeCell);
+	dump(treeCell.value);
 
-  if (col.value.id != "protocol")
+	if (col.value.id != "protocol")
 		return false; // prevent popup from appearing
 	
-	let ruleProtocols = JSON.parse(treeCell.value);
-	let menu = document.getElementById("clipmenu");
+	let value = treeElement.view.getCellValue(row, col);
+	let ruleProtocols = JSON.parse(value ? value : []);
+	let menu = document.getElementById("prplMenu");
 	for each (var protocol in supportedProtocols)
-		menu.getElementById(protocol.name).checked = protocol.checked;
+		menu.getElementById(protocol.name).setAttribute("checked", protocol.checked);
 }
 
 function closePopup(event) {
 	// See https://developer.mozilla.org/en/XUL/menupopup
 	let treeElement = document.getElementById("thetree");
 	let treeCell = treeElement.currentIndex;
+	treeElement.view.getCellText(treeElement.currentIndex, treeElement.columns.getColumnAt(0));
+	dump(treeCell);
+	dump(treeCell.tagName);
 
   let ruleProtocols = [];
 	for each (var protocol in supportedProtocols) {
-		let menuitem = document.getElementById("clipmenu");
-		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.checked});
-		//popup.checked = false; // Reset
+		let menuitem = document.getElementById("prplMenu");
+		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.hasAttribute("checked")});
+		menuitem.setAttribute("checked", false); // Reset
 	}
-	treeCell.value = JSON.stringify(ruleProtocols);
+
+	treeElement.view.setCellValue(treeCellIndex, treeElement.columns.getNamedColumn("protocol"), JSON.stringify(ruleProtocols));
 }
 
 function parse() {
@@ -127,7 +147,7 @@ var treeView = {
 
 window.addEventListener("load",
 						(function(e) {
-							//loadSupportedProtocols();
+							loadSupportedProtocols();
 							parse();
 							//document.getElementById('thetree').view = treeView;
 						}),

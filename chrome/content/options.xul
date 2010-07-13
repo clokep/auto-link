@@ -38,35 +38,26 @@
  - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
-<?xml-stylesheet href="./jsresyntaxhighlighter/jsresyntaxhighlighter.css" type="text/css"?>
+<?xml-stylesheet href="chrome://autolink/content/jsresyntaxhighlighter/jsresyntaxhighlighter.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
             title="Auto Link Options"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <prefpane id="autoLink-pane">
+	<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
 	<script type="application/javascript" src="chrome://autolink/content/options.js"/>
 	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
-	<script type="application/javascript" src="./jsresyntaxhighlighter/jsresyntaxhighlighter.js"/>
+	<script type="application/javascript" src="chrome://autolink/content/jsresyntaxhighlighter/jsresyntaxhighlighter.js"></script>
 
-    <preferences id="linkbugzilla-preferences">
-      <preference id="pref_bugzilla_server_url"
-                  name="extensions.linkbugzilla.bugzilla_server_url"
-                  type="string"/>
-      <preference id="pref_server_pretty_name"
-                  name="extensions.linkbugzilla.server_pretty_name"
-                  type="string"/>
-    </preferences>
-
+	<prefpane id="autoLink-pane">
 		<popupset>
-			<menupopup id="clipmenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
+			<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 				<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
 				<menuseparator/>
-				<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
+				<!--<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
 				<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
-				<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>
-				<menuseparator/>
+				<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>-->
+				<menuseparator id="prplMenuSep2"/>
 				<menuitem label="Close"/>
 			</menupopup>
 		</popupset>
@@ -245,7 +236,7 @@
 			</menu>
 		</menubar>
 
-		<label value="Right click for popup" context="clipmenu"/>
+		<label value="Right click for popup" context="prplMenu"/>
 		
 		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
 			<treecols>
@@ -258,8 +249,8 @@
 				<treecol id="protocol" label="Protocol" flex="2"/>
 			</treecols>
 
-			<!--<treechildren popup="clipmenu"/>-->
-			<treechildren popup="clipmenu">
+			<!--<treechildren popup="prplMenu"/>-->
+			<treechildren popup="prplMenu">
 				<treeitem>
 					<treerow>
 						<treecell label="joe@somewhere.com"/>
@@ -281,11 +272,6 @@
 			</treechildren>
 		</tree>
 
-		<hbox>
-			<label value="Global" command="flags"/>
-			<textbox id="flags"/>
-		</hbox>
-
 		<vbox>
 			<stack>
 				<textbox style="margin: 0;"/>
@@ -298,5 +284,5 @@
 			</stack>
 		</vbox>
 
-  </prefpane>
+	</prefpane>
 </prefwindow>
