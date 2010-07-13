@@ -39,15 +39,16 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://autolink/content/jsresyntaxhighlighter/jsresyntaxhighlighter.css" type="text/css"?>
+<?xml-stylesheet href="regexp.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
             title="Auto Link Options"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
-	<script type="application/javascript" src="chrome://autolink/content/options.js"/>
+	<!--<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
+	<script type="application/javascript" src="chrome://autolink/content/options.js"/>-->
 	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
-	<script type="application/javascript" src="chrome://autolink/content/jsresyntaxhighlighter/jsresyntaxhighlighter.js"></script>
+	<script type="application/javascript" src="/jsresyntaxhighlighter/jsresyntaxhighlighter.js"/>
 
 	<prefpane id="autoLink-pane">
 		<popupset>
@@ -236,7 +237,7 @@
 			</menu>
 		</menubar>
 
-		<label value="Right click for popup" context="prplMenu"/>
+		<!--<label value="Right click for popup" context="prplMenu"/>
 		
 		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
 			<treecols>
@@ -249,7 +250,6 @@
 				<treecol id="protocol" label="Protocol" flex="2"/>
 			</treecols>
 
-			<!--<treechildren popup="prplMenu"/>-->
 			<treechildren popup="prplMenu">
 				<treeitem>
 					<treerow>
@@ -270,19 +270,59 @@
 					</treerow>
 				</treeitem>
 			</treechildren>
-		</tree>
+		</tree>-->
 
-		<vbox>
-			<stack>
-				<textbox style="margin: 0;"/>
-				<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
-				<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
-			</stack>
-			<stack style="background-color: white; padding: 3px; border: 1px solid black;">
-				<hbox id="search_bg"></hbox>
-				<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
-			</stack>
-		</vbox>
+
+		
+		<richlistbox>
+			<richlistitem>
+				<vbox flex="1">
+					<hbox flex="1">
+						<stack flex="1">
+							<textbox style="margin: 0;"/>
+							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
+							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
+						</stack>
+						<checkbox label="g" checked="true"/>
+						<checkbox label="i" checked="true"/>
+						<checkbox label="m" checked="false"/>
+					</hbox>
+					<hbox>
+						<button id="protocols" type="menu" label="Choose Protocols">
+							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
+								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+								<menuseparator/>
+								<!--<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
+								<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
+								<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>-->
+								<menuseparator id="prplMenuSep2"/>
+								<menuitem label="Close"/>
+							</menupopup>
+						</button>
+						<stack flex="1">
+							<textbox style="margin: 0;"/>
+							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
+							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
+						</stack>
+						<stack flex="1">
+							<textbox style="margin: 0;"/>
+							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
+							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
+						</stack>
+					</hbox>
+				</vbox>
+			</richlistitem>
+			<richlistitem>
+
+			</richlistitem>
+		</richlistbox>
+
+		<stack style="background-color: white; padding: 3px; border: 1px solid black;">
+			<hbox id="search_bg"></hbox>
+			<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
+		</stack>
+		
+		<regexp flex="1" value="Enter regex here: (\d+?).+" name="Test" g="false" i="true" m="true"/>
 
 	</prefpane>
 </prefwindow>
