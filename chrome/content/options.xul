@@ -230,10 +230,15 @@
 		<richlistbox>
 			<richlistitem>
 				<vbox flex="1">
-					<regexp name="Pattern" g="true" value="bug (\d+?)" flex="1"/>
 					<hbox>
-						<regexp name="User Name" hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
-						<regexp name="Buddy/Room Name" hideflags="true" highlightSyntax="false" value="#.+" flex="1"/>
+						<label crop="end" class="regexpName" value="Pattern"/>
+						<regexp g="true" value="bug (\d+?)" flex="1"/>
+					</hbox>
+					<hbox>
+						<label crop="end" class="regexpName" value="User Name"/>
+						<regexp hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
+						<label crop="end" class="regexpName" value="Buddy/Room Name"/>
+						<regexp hideflags="true" highlightSyntax="false" value="#.+" flex="1"/>
 						<button id="protocols" type="menu" label="Choose Protocols">
 							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>

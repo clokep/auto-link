@@ -33,13 +33,14 @@
 		  xmlns:xbl="http://www.mozilla.org/xbl">
 	<binding id="regexp" extends="xul:hbox">
 		<content>
-			<xul:label xbl:inherits="value=name" crop="end"
-					   class="regexpName"/>
-			<xul:stack xbl:inherits="flex">
-				<!--<xul:textbox anonid="textbox_background"/>-->
-				<xul:hbox anonid="regexBackground"/>
+			<xul:stack xbl:inherits="flex" style="padding-left: 3px;">
+				<xul:textbox anonid="textbox_background"
+							 style="margin-left: -3px;"/>
+				<xul:label anonid="regexBackground" class="plain monospace"
+						   style="padding-left: 1px; padding-top: 5px;"/>
 				<xul:textbox xbl:inherits="value" anonid="regexTextbox"
-							 oninput="parse();"/>
+							 oninput="parse();" class="plain monospace"
+							 style="margin-left: 0px;"/>
 			</xul:stack>
 			<xul:checkbox label="g" xbl:inherits="checked=g,collapsed=hideflags"
 						  checked="false"/>
@@ -58,19 +59,9 @@
 			<method name="parse">
 				<body>
 					<![CDATA[
-						function parseDOM(str) {
-							let node = document.createElement("label");
-							node.setAttribute("class","regex");
-							alert(node);
-							while (/<label class="b">.*?<\/label>/.match()) {
-								
-							}
-							return node;
-						}
-
 						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
 						function  HTMLParser(aHTMLString){
-							var parseDOM = content.document.createElement('div');
+							var parseDOM = document.createElement('div');
 							parseDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
 														   .getService(Components.interfaces.nsIScriptableUnescapeHTML) 
 														   .parseFragment(aHTMLString, false, null, parseDOM));
@@ -89,23 +80,12 @@
 						let regex = document.getAnonymousElementByAttribute(this, "anonid", "regexTextbox");
 						let text = regex.value;
 
-						// From http://jszen.blogspot.com/2007/02/how-to-parse-html-strings-into-dom.html
-						//var range = document.createRange();
-						//range.selectNode(regex);
-						//var doc = range.createContextualFragment("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>");
-						//var parser = new DOMParser();
-						//var doc = parser.parseFromString("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>","text/xml");
-						doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>")
-						//alert(DOMObject.getElementsByTagName('p').length)
-
-						alert(doc);
-						//var newNode = parseDOM(this.highlightJsReSyntax(text));
+						let doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>")
 
 						// Replace with new children
 						for (var i = 0; i < doc.childNodes.length; i++) {
 							regex_bg.appendChild(doc.childNodes[i]);
 						}
-						alert("Done");
 					]]>
 				</body>
 			</method>
