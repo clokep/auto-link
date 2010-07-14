@@ -123,13 +123,16 @@ var autoLink = {
 					i++; // Skip the next char
 
 			let result = 0;
+			let lastIndex = 0;
 			while (expression(aNode.data)) {
 				aNode.data.replace(expression,
 								 // See https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Global_Objects/String/replace#Specifying_a_function_as_a_parameter
 								 (function() {
 									 // See http://www.devsource.com/c/a/Using-VS/Regular-Expressions-and-Strings-in-JavaScript/
 									 let str = arguments[0]; // Matching string
-									 let offset = arguments[capturingGroups + 1]; // Offset of start of match
+									 let offset = arguments[capturingGroups + 1] - lastIndex; // Offset to start of match
+									 if (offset < 0) // We found a second match before the end of the previous match
+										return;
 									 let s = arguments[capturingGroups + 2]; // The original string passed
 									 let matches = [];
 									 if (capturingGroups > 0) {
@@ -154,6 +157,7 @@ var autoLink = {
 									 linkTextNode.parentNode.insertBefore(linkNode, linkTextNode);
 									 linkNode.appendChild(linkTextNode);
 									 
+									 lastIndex = offset + str.length; // Beginning to search next time
 									 result += 2;
 								 })
 						   );
