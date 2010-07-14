@@ -39,23 +39,44 @@
 				<!--<xul:textbox anonid="textbox_background"/>-->
 				<xul:hbox anonid="regexBackground"/>
 				<xul:textbox xbl:inherits="value" anonid="regexTextbox"
-							 oninput="parse();" class="plain"/>
+							 oninput="parse();"/>
 			</xul:stack>
-			<xul:checkbox label="g" xbl:inherits="checked=g"
-						  oncommand="parse()"/>
-			<xul:checkbox label="i" xbl:inherits="checked=i"
-						  oncommand="parse()"/>
-			<xul:checkbox label="m" xbl:inherits="checked=m"
-						  oncommand="parse()"/>
+			<xul:checkbox label="g" xbl:inherits="checked=g,collapsed=hideflags"
+						  checked="false"/>
+			<xul:checkbox label="i" xbl:inherits="checked=i,collapsed=hideflags"
+						  checked="true"/>
+			<xul:checkbox label="m" xbl:inherits="checked=m,collapsed=hideflags"
+						  checked="false"/>
+			<xul:checkbox label="y" xbl:inherits="checked=y,collapsed=hideflags"
+						  checked="false"/>
 			<xul:checkbox label="Syntax Highlighting"
 						  anonid="highlightSyntax"
-						  xbl:inherits="checked=highlightSyntax" checked="true"
-						  oncommand="parse()"/>
+						  xbl:inherits="checked=highlightSyntax,collapsed=hideflags"
+						  checked="true" oncommand="parse()"/>
 		</content>
 		  <implementation>
 			<method name="parse">
 				<body>
 					<![CDATA[
+						function parseDOM(str) {
+							let node = document.createElement("label");
+							node.setAttribute("class","regex");
+							alert(node);
+							while (/<label class="b">.*?<\/label>/.match()) {
+								
+							}
+							return node;
+						}
+
+						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
+						function  HTMLParser(aHTMLString){
+							var parseDOM = content.document.createElement('div');
+							parseDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
+														   .getService(Components.interfaces.nsIScriptableUnescapeHTML) 
+														   .parseFragment(aHTMLString, false, null, parseDOM));
+							return parseDOM;
+						}
+					
 						let regex_bg = document.getAnonymousElementByAttribute(this, "anonid", "regexBackground");
 						// Remove all current children
 						while (regex_bg.childNodes.length >= 1 )
@@ -69,9 +90,16 @@
 						let text = regex.value;
 
 						// From http://jszen.blogspot.com/2007/02/how-to-parse-html-strings-into-dom.html
-						var range = document.createRange();
-						range.selectNode(regex);
-						var doc = range.createContextualFragment("<span class=\"regex\">" + this.highlightJsReSyntax(text) + "</span>");
+						//var range = document.createRange();
+						//range.selectNode(regex);
+						//var doc = range.createContextualFragment("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>");
+						//var parser = new DOMParser();
+						//var doc = parser.parseFromString("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>","text/xml");
+						doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>")
+						//alert(DOMObject.getElementsByTagName('p').length)
+
+						alert(doc);
+						//var newNode = parseDOM(this.highlightJsReSyntax(text));
 
 						// Replace with new children
 						for (var i = 0; i < doc.childNodes.length; i++) {
@@ -103,11 +131,11 @@
 							};
 
 						function errorStr (str) {
-							return '<span class="b err">' + str + '</span>';
+							return '<label class="b err">' + str + '</label>';
 						};
 
 						function groupStr (str, depth) {
-							return '<span class="b g' + depth + '">' + str + '</span>';
+							return '<label class="b g' + depth + '">' + str + '</label>';
 						};
 
 						function compressHtmlEntities (str) {
@@ -202,7 +230,7 @@
 										lastToken = {rangeable: lastToken.type !== type.RANGE_HYPHEN};
 									// Metaclass (matches more than one character index)
 									} else if (/^\\[dsw]$/i.test(m)) {
-										output += "<span class=\"b\">" + m + "</span>";
+										output += "<label class=\"b\">" + m + "</label>";
 										// Traditional regex behavior is that a metaclass should be unrangeable
 										// (RegexPal terminology). Hence, [-\dz], [\d-z], and [z-\d] should all be
 										// equivalent. However, at least some browsers handle this inconsistently.
@@ -216,7 +244,7 @@
 										output += errorStr(m);
 									// Metasequence representing a single character index, or escaped literal character
 									} else {
-										output += "<span class=\"b\">" + expandHtmlEntities(m) + "</span>";
+										output += "<label class=\"b\">" + expandHtmlEntities(m) + "</label>";
 										lastToken = {
 											rangeable: lastToken.type !== type.RANGE_HYPHEN,
 											charCode: getTokenCharCode(m)
@@ -240,7 +268,7 @@
 												output += errorStr("-");
 											// Hyphen creating a valid range
 											} else {
-												output += "<span class=\"u\">-</span>";
+												output += "<label class=\"u\">-</label>";
 											}
 											lastToken = {
 												rangeable: false,
@@ -253,7 +281,7 @@
 											// Hyphen at the end of an unclosed character class (i.e., the end of the regex)
 											} else {
 												//output += errorStr("-"); // Previous RB handling
-												output += "<span class=\"u\">-</span>";
+												output += "<label class=\"u\">-</label>";
 												break; // Might as well break
 											}
 										}
@@ -295,7 +323,7 @@
 							switch (m.charAt(0)) {
 								// Character class
 								case "[":
-									output += "<span class=\"i\">" + parseCharClass(m) + "</span>";
+									output += "<label class=\"i\">" + parseCharClass(m) + "</label>";
 									lastToken = {quantifiable: true};
 									break;
 								// Group opening
@@ -365,10 +393,10 @@
 											num = Math.floor(num / 10); // Drop the last digit
 										}
 										if (num > 0) {
-											output += "<span class=\"b\">\\" + num + "</span>" + nonBackrefDigits;
+											output += "<label class=\"b\">\\" + num + "</label>" + nonBackrefDigits;
 										} else {
 											var parts = /^\\([0-3][0-7]{0,2}|[4-7][0-7]?|[89])([0-9]*)/.exec(m);
-											output += "<span class=\"b\">\\" + parts[1] + "</span>" + parts[2];
+											output += "<label class=\"b\">\\" + parts[1] + "</label>" + parts[2];
 										}
 									// Metasequence
 									} else if (/^[0bBcdDfnrsStuvwWx]/.test(m.charAt(1))) {
@@ -382,7 +410,7 @@
 											lastToken = {quantifiable: false};
 											break;
 										}
-										output += "<span class=\"b\">" + m + "</span>";
+										output += "<label class=\"b\">" + m + "</label>";
 										// Non-quantifiable metasequence
 										if ("bB".indexOf(m.charAt(1)) > -1) {
 											lastToken = {quantifiable: false};
@@ -416,7 +444,7 @@
 												output += errorStr(m);
 											} else {
 												// Quantifiers for groups are shown in the style of the (preceeding) group's depth
-												output += (lastToken.style ? '<span class="b ' + lastToken.style + '">' : '<span class="b">') + m + '</span>';
+												output += (lastToken.style ? '<label class="b ' + lastToken.style + '">' : '<label class="b">') + m + '</label>';
 											}
 										} else {
 											output += errorStr(m);
@@ -432,7 +460,7 @@
 											output += errorStr(m);
 										} else {
 											// Alternators within groups are shown in the style of the (containing) group's depth
-											output += openGroups.length ? groupStr("|", groupStyleDepth) : "<span class=\"b\">|</span>";
+											output += openGroups.length ? groupStr("|", groupStyleDepth) : "<label class=\"b\">|</label>";
 										}
 										lastToken = {
 											quantifiable: false,
@@ -440,11 +468,11 @@
 										};
 									// ^ or $ anchor
 									} else if ("^$".indexOf(m) > -1) {
-										output += "<span class=\"b\">" + m + "</span>";
+										output += "<label class=\"b\">" + m + "</label>";
 										lastToken = {quantifiable: false};
 									// Dot (.)
 									} else if (m === ".") {
-										output += "<span class=\"b\">.</span>";
+										output += "<label class=\"b\">.</label>";
 										lastToken = {quantifiable: true};
 									// Literal character sequence
 									} else {
@@ -473,7 +501,11 @@
 			</method>
 		</implementation>
 	</binding>
-	<binding id="regexpoutput">
+	<binding id="searchstring">
+		<!-- content, property, method and event descriptions go here -->
+		<!-- the haystack to run against -->
+	</binding>
+	<binding id="replacestring">
 		<!-- content, property, method and event descriptions go here -->
 	</binding>
 </bindings>

@@ -38,7 +38,6 @@
  - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://autolink/content/jsresyntaxhighlighter/jsresyntaxhighlighter.css" type="text/css"?>
 <?xml-stylesheet href="regexp.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
@@ -47,8 +46,6 @@
 
 	<!--<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
 	<script type="application/javascript" src="chrome://autolink/content/options.js"/>-->
-	<!-- See http://stevenlevithan.com/regex/syntaxhighlighter/ -->
-	<script type="application/javascript" src="/jsresyntaxhighlighter/jsresyntaxhighlighter.js"/>
 
 	<prefpane id="autoLink-pane">
 		<popupset>
@@ -64,13 +61,6 @@
 		</popupset>
 
 		<menubar id="options">
-			<menu id="options-menu" label="Options">
-				<menupopup id="optionsDropdown">
-					<menuitem id="highlightSyntax" type="checkbox" checked="true" label="Highlight regex syntax" oncommand="parse();"/>
-					<menuitem id="highlightMatches" type="checkbox" checked="true" label="Highlight matches"/>
-					<menuitem id="invertMatches" type="checkbox" label="Invert results"/>
-				</menupopup>
-			</menu>
 			<menu id="quickReferenceDropdown" label="JavaScript Regex Quick Reference">
 				<!-- Replace with a panel? -->
 				<menupopup id="quickReference2">
@@ -237,57 +227,13 @@
 			</menu>
 		</menubar>
 
-		<!--<label value="Right click for popup" context="prplMenu"/>
-		
-		<tree id="thetree" flex="1" rows="2" editable="true" seltype="cell" treelines="true">
-			<treecols>
-				<treecol id="sender" label="Sender" flex="1"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="global" label="g" type="checkbox" editable="true" fixed="true"/>
-				<treecol id="caseInsensitive" label="i" type="checkbox" editable="true" fixed="true"/>
-				<treecol id="multiline" label="m" type="checkbox" editable="true" fixed="true"/>
-				<splitter class="tree-splitter"/>
-				<treecol id="protocol" label="Protocol" flex="2"/>
-			</treecols>
-
-			<treechildren popup="prplMenu">
-				<treeitem>
-					<treerow>
-						<treecell label="joe@somewhere.com"/>
-						<treecell value="true"/>
-						<treecell value="true"/>
-						<treecell value="false"/>
-						<treecell label="Top secret plans" editable="false"/>
-					</treerow>
-				</treeitem>
-				<treeitem>
-					<treerow>
-						<treecell label="mel@whereever.com"/>
-						<treecell value="true"/>
-						<treecell value="true"/>
-						<treecell value="false"/>
-						<treecell label="Let's do lunch" editable="false"/>
-					</treerow>
-				</treeitem>
-			</treechildren>
-		</tree>-->
-
-
-		
 		<richlistbox>
 			<richlistitem>
 				<vbox flex="1">
-					<hbox flex="1">
-						<stack flex="1">
-							<textbox style="margin: 0;"/>
-							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
-							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
-						</stack>
-						<checkbox label="g" checked="true"/>
-						<checkbox label="i" checked="true"/>
-						<checkbox label="m" checked="false"/>
-					</hbox>
+					<regexp name="Pattern" g="true" value="bug (\d+?)" flex="1"/>
 					<hbox>
+						<regexp name="User Name" hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
+						<regexp name="Buddy/Room Name" hideflags="true" highlightSyntax="false" value="#.+" flex="1"/>
 						<button id="protocols" type="menu" label="Choose Protocols">
 							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
@@ -299,16 +245,6 @@
 								<menuitem label="Close"/>
 							</menupopup>
 						</button>
-						<stack flex="1">
-							<textbox style="margin: 0;"/>
-							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
-							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
-						</stack>
-						<stack flex="1">
-							<textbox style="margin: 0;"/>
-							<hbox id="regex_bg" class="monospace" style="padding-left: 1px; padding-top: 3px;"></hbox>
-							<textbox id="regex" oninput="parse();" class="plain monospace" tabindex="1" value="Enter regex here: (\d+?).+"/>
-						</stack>
 					</hbox>
 				</vbox>
 			</richlistitem>
@@ -317,11 +253,8 @@
 			</richlistitem>
 		</richlistbox>
 
-		<stack style="background-color: white; padding: 3px; border: 1px solid black;">
-			<hbox id="search_bg"></hbox>
-			<textbox id="search" class="plain monospace" tabindex="2" value="Enter test data here" />
-		</stack>
-		
+		<label class="regex"><label class="i">Test</label></label>
+
 		<regexp flex="1" value="Enter regex here: (\d+?).+" name="Test" g="false" i="true" m="true"/>
 
 	</prefpane>
