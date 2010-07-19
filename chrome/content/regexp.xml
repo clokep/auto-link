@@ -37,10 +37,10 @@
 				<xul:textbox anonid="textbox_background"
 							 style="margin-left: -3px;"/>
 				<xul:label anonid="regexBackground" class="plain monospace"
-						   style="padding-left: 1px; padding-top: 5px;"/>
+						   style="margin: 0; padding: 0; padding-left: 1px; padding-top: 5px;"/>
 				<xul:textbox xbl:inherits="value" anonid="regexTextbox"
 							 oninput="parse();" class="plain monospace"
-							 style="margin-left: 0px;"/>
+							 style="margin: 0; padding: 0; margin-left: 0px;"/>
 			</xul:stack>
 			<xul:checkbox label="g" xbl:inherits="checked=g,collapsed=hideflags"
 						  checked="false"/>

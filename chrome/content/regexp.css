@@ -1,6 +1,5 @@
 regexp {
 	-moz-binding: url('regexp.xml#regexp');
-	-moz-box-align: center;
 }
 
 /* JavaScript Regex Syntax Highlighter 0.1

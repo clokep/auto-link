@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
-  *
+ *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
  * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
@@ -36,14 +36,14 @@
 
 function dump(aMessage) {
 	var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-									 .getService(Components.interfaces.nsIConsoleService);
+								   .getService(Components.interfaces.nsIConsoleService);
 	consoleService.logStringMessage("Auto-Link: " + aMessage);
 }
 
 var supportedProtocols = [];
 function loadSupportedProtocols() {
-	var parentNode = document.getElementById("prplMenu");
-	var endNode = document.getElementById("prplMenuSep2");
+	var menu = document.getElementById("prplMenu");
+	var insertBefore = document.getElementById("prplMenuSep2");
 
 	var pcs = Cc["@instantbird.org/purple/core;1"]
 				 .getService(Ci.purpleICoreService);
@@ -61,32 +61,22 @@ function loadSupportedProtocols() {
 		menuitem.setAttribute("id", proto.id);
 		menuitem.setAttribute("type", "checkbox");
 		menuitem.setAttribute("closemenu", "none");
-		parentNode.insertBefore(menuitem, endNode);
+
+		menu.insertBefore(menuitem, insertBefore);
 	});
 }
 
 function doShowPopup(event) {
-	// See https://developer.mozilla.org/en/XUL/menupopup
-	let treeElement = event.rangeParent;
-	let row = new Object();
-	let col = new Object();
-	let treeCell = new Object();
-	treeElement.treeBoxObject.getCellAt(event.clientX, event.clientY, row, col, treeCell);
-	dump(treeCell.value);
-
-	if (col.value.id != "protocol")
-		return false; // prevent popup from appearing
-	
-	let value = treeElement.view.getCellValue(row, col);
+	/*let value = treeElement.view.getCellValue(row, col);
 	let ruleProtocols = JSON.parse(value ? value : []);
 	let menu = document.getElementById("prplMenu");
 	for each (var protocol in supportedProtocols)
-		menu.getElementById(protocol.name).setAttribute("checked", protocol.checked);
+		menu.getElementById(protocol.name).setAttribute("checked", protocol.checked);*/
 }
 
 function closePopup(event) {
 	// See https://developer.mozilla.org/en/XUL/menupopup
-	let treeElement = document.getElementById("thetree");
+	/*let treeElement = document.getElementById("thetree");
 	let treeCell = treeElement.currentIndex;
 	treeElement.view.getCellText(treeElement.currentIndex, treeElement.columns.getColumnAt(0));
 	dump(treeCell);
@@ -99,56 +89,11 @@ function closePopup(event) {
 		menuitem.setAttribute("checked", false); // Reset
 	}
 
-	treeElement.view.setCellValue(treeCellIndex, treeElement.columns.getNamedColumn("protocol"), JSON.stringify(ruleProtocols));
+	treeElement.view.setCellValue(treeCellIndex, treeElement.columns.getNamedColumn("protocol"), JSON.stringify(ruleProtocols));*/
 }
-
-function parse() {
-	let regex_bg = document.getElementById("regex_bg");
-	// Remove all current children
-	while (regex_bg.childNodes.length >= 1 )
-		regex_bg.removeChild(regex_bg.firstChild);
-
-	// If we don't want syntax highlight then don't do any
-	if (!document.getElementById("highlightSyntax").hasAttribute("checked"))
-		return;
-
-	let regex = document.getElementById("regex");
-	let text = regex.value;
-	
-	// From http://jszen.blogspot.com/2007/02/how-to-parse-html-strings-into-dom.html
-	var range = document.createRange();
-	range.selectNode(regex);
-	var doc = range.createContextualFragment("<span class=\"regex\">" + highlightJsReSyntax(text) + "</span>");
-
-	// Replace with new children
-	for (var i = 0; i < doc.childNodes.length; i++) {
-		regex_bg.appendChild(doc.childNodes[i]);
-	}
-}
-
-var treeView = {
-	rowCount : 10000,
-	getCellText : function(row,column){
-		if (column.id != "protocol")
-			return "Row "+row;
-		else
-			return "February 18";
-	},
-	setTree: function(treebox){ this.treebox = treebox; },
-	isContainer: function(row){ return false; },
-	isSeparator: function(row){ return false; },
-	isSorted: function(){ return false; },
-	getLevel: function(row){ return 0; },
-	getImageSrc: function(row,col){ return null; },
-	getRowProperties: function(row,props){},
-	getCellProperties: function(row,col,props){},
-	getColumnProperties: function(colid,col,props){}
-};
 
 window.addEventListener("load",
 						(function(e) {
 							loadSupportedProtocols();
-							parse();
-							//document.getElementById('thetree').view = treeView;
 						}),
 						false);

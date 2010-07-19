@@ -44,21 +44,10 @@
             title="Auto Link Options"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<!--<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
-	<script type="application/javascript" src="chrome://autolink/content/options.js"/>-->
+	<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
+	<script type="application/javascript" src="chrome://autolink/content/options.js"/>
 
 	<prefpane id="autoLink-pane">
-		<popupset>
-			<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
-				<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
-				<menuseparator/>
-				<!--<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
-				<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
-				<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>-->
-				<menuseparator id="prplMenuSep2"/>
-				<menuitem label="Close"/>
-			</menupopup>
-		</popupset>
 
 		<menubar id="options">
 			<menu id="quickReferenceDropdown" label="JavaScript Regex Quick Reference">
@@ -230,11 +219,11 @@
 		<richlistbox>
 			<richlistitem>
 				<vbox flex="1">
-					<hbox>
+					<hbox style="-moz-box-align: center;">
 						<label crop="end" class="regexpName" value="Pattern"/>
 						<regexp g="true" value="bug (\d+?)" flex="1"/>
 					</hbox>
-					<hbox>
+					<hbox style="-moz-box-align: center;">
 						<label crop="end" class="regexpName" value="User Name"/>
 						<regexp hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
 						<label crop="end" class="regexpName" value="Buddy/Room Name"/>
@@ -257,10 +246,5 @@
 
 			</richlistitem>
 		</richlistbox>
-
-		<label class="regex"><label class="i">Test</label></label>
-
-		<regexp flex="1" value="Enter regex here: (\d+?).+" name="Test" g="false" i="true" m="true"/>
-
 	</prefpane>
 </prefwindow>
