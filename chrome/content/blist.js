@@ -66,24 +66,25 @@ var autoLink = {
 				let conversation = aObject._conv;
 				// Loop over each ruleset
 				for each (var rule in rules) {
-					rule.rule = autoLink.stringToRegex(rule.rule);
-					rule.users = autoLink.stringToRegex(rule.users);
-					rule.rooms = autoLink.stringToRegex(rule.rooms);
+					// XXX Probably needs a try block around it (or maybe we should try it before trying to add the rule?)
+					rule.pattern = autoLink.stringToRegex(rule.pattern);
+					rule.accountName = autoLink.stringToRegex(rule.accountName);
+					rule.conversationName = autoLink.stringToRegex(rule.conversationName);
 
 					// Count the number of capturing groups: ( )
 					// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
 					rule.capturingGroups = 0;
-					for (var i = 0; i < (rule.rule.source.length - 1); i++)
-						if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
+					for (var i = 0; i < (rule.pattern.source.length - 1); i++)
+						if (rule.pattern.source.charAt(i) == "(" && rule.pattern.source.charAt(i + 1) != "?")
 							rule.capturingGroups++;
-						else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
+						else if (rule.pattern.source.charAt(i) == "\\") // If we're escaping then we don't care about the next char
 							i++; // Skip the next char
 
 					// Check that the user/room names & protocol are valid
 					if ((conversation.account.protocol.id in rule.protocols
 							|| !rule.protocols.length)
-						&& rule.users.test(conversation.account.name) // XXX Does this work if your account has an alias?
-						&& rule.rooms.test(conversation.name)) { // XXX Does this work if you have an alias for the buddy?
+						&& rule.accountName.test(conversation.account.name) // XXX Does this work if your account has an alias?
+						&& rule.conversationName.test(conversation.name)) { // XXX Does this work if you have an alias for the buddy?
 							// Add rule to current conversation
 							aObject.addTextModifier(autoLink.getLinkModifier(rule));
 					}
@@ -123,9 +124,7 @@ var autoLink = {
 
 	getLinkModifier: function(rule) {
 		return (function(aNode) {
-			// Probably needs a try block around it (or maybe we should try it before trying to add the rule?)
-			let expression = rule.rule;
-
+			let expression = rule.pattern;
 			let capturingGroups = rule.capturingGroups;
 
 			let result = 0;

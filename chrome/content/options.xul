@@ -140,7 +140,7 @@
 		
 		<description value="Help!" popup="helpPanel"/>
 
-		<richlistbox>
+		<richlistbox id="rules">
 			<ruleitem>
 			</ruleitem>
 			<!--<richlistitem>

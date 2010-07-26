@@ -82,9 +82,9 @@ function loadRules() {
 	let conversation = aObject._conv;
 	// Loop over each ruleset
 	for each (var rule in rules) {
-		rule.rule = autoLink.stringToRegex(rule.rule);
-		rule.users = autoLink.stringToRegex(rule.users);
-		rule.rooms = autoLink.stringToRegex(rule.rooms);
+		rule.pattern = autoLink.stringToRegex(rule.pattern);
+		rule.accountName = autoLink.stringToRegex(rule.accountName);
+		rule.conversationName = autoLink.stringToRegex(rule.conversationName);
 
 		// Count the number of capturing groups: ( )
 		// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
@@ -95,6 +95,12 @@ function loadRules() {
 			else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
 				i++; // Skip the next char
 		*/
+		let elt = document.createElement("ruleitem");
+		document.getElementById("rules").parentNode.appendChild(elt);
+		elt.build(rule.pattern, rule.accountName, rule.conversationName);
+		elt.ignoreCase = false;
+		elt.hideFlags = false;
+		elt.hideHighlightSyntaxFlag = true;
 	}
 }
 	
@@ -113,12 +119,6 @@ function closePopup(event) {
 window.addEventListener("load",
 						(function(e) {
 							loadSupportedProtocols();
-							let elt = document.createElement("regexp");
-							document.getElementById('testPattern').parentNode.appendChild(elt);
-							elt.build(new RegExp(/bug[ #]+(\d+)/giy));
-							elt.ignoreCase = false;
-							elt.hideFlags = false;
-							elt.hideHighlightSyntaxFlag = true;
 							loadRules();
 						}),
 						false);
