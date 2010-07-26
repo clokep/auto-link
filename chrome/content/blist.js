@@ -100,10 +100,10 @@ var autoLink = {
 	},
 	
 	// Reforms a regular expression from a string
-	stringToRegex: function(str) {
+	stringToRegex: function(str) { // XXX move to utilities file
 		let separator = str.lastIndexOf('/');
 		return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
-	}
+	},
 	
 	// This will convert between "some string $1" to "some string " + matches[0]
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {

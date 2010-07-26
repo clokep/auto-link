@@ -20,7 +20,7 @@
  - the Initial Developer. All Rights Reserved.
  -
  - Contributor(s):
- -   Based on work by Steven Levithan <stevenlevithan.com>
+ -   Parts are based on work by Steven Levithan <stevenlevithan.com>
  -     RegexPal 0.1.4c, (c) 2007-2008 (GNU LGPL 3.0 license)
  -
  - Alternatively, the contents of this file may be used under the terms of
@@ -141,9 +141,10 @@
 		<description value="Help!" popup="helpPanel"/>
 
 		<richlistbox>
-			<richlistitem>
+			<ruleitem>
+			</ruleitem>
+			<!--<richlistitem>
 				<vbox flex="1">
-					<!-- Possibly include a name -->
 					<hbox align="baseline">
 						<label crop="end" control="user" value="Account Name"/>
 						<regexp id="user" hideFlags="true" highlightSyntax="false" source="clokep.*" flex="1"/>
@@ -169,7 +170,7 @@
 						<textbox id="linkTitle" value="Bug #$1 @ Instantbird's Bugzilla" flex="1"/>
 					</hbox>
 				</vbox>
-			</richlistitem>
+			</richlistitem>-->
 			<richlistitem>
 				<vbox flex="1">
 					<!-- Possibly include a name -->

@@ -65,7 +65,46 @@ function loadSupportedProtocols() {
 		menu.insertBefore(menuitem, insertBefore);
 	});
 }
- 
+
+function loadRules() {
+	var prefs =	Cc["@mozilla.org/preferences-service;1"]
+					.getService(Ci.nsIPrefService)
+					.getBranch("extensions.autolink.");
+	let rules = [];
+	try {
+		rules = JSON.parse(prefs.getCharPref("rules"));
+	} catch(e) {
+		// Well, just do nothing.
+		// Should probably throw an error
+	}
+
+	// See http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
+	let conversation = aObject._conv;
+	// Loop over each ruleset
+	for each (var rule in rules) {
+		rule.rule = autoLink.stringToRegex(rule.rule);
+		rule.users = autoLink.stringToRegex(rule.users);
+		rule.rooms = autoLink.stringToRegex(rule.rooms);
+
+		// Count the number of capturing groups: ( )
+		// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
+		/*rule.capturingGroups = 0;
+		for (var i = 0; i < (rule.rule.source.length - 1); i++)
+			if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
+				rule.capturingGroups++;
+			else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
+				i++; // Skip the next char
+		*/
+	}
+}
+	
+// Reforms a regular expression from a string
+function stringToRegex(str) {
+	let separator = str.lastIndexOf('/');
+	return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
+}
+
+
 function doShowPopup(event) {
 }
 function closePopup(event) {
@@ -80,5 +119,6 @@ window.addEventListener("load",
 							elt.ignoreCase = false;
 							elt.hideFlags = false;
 							elt.hideHighlightSyntaxFlag = true;
+							loadRules();
 						}),
 						false);

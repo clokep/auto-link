@@ -1,32 +1,39 @@
 <?xml version="1.0"?>
-<!--
-// JavaScript Regex Syntax Highlighter 0.1
-// (c) 2010 Steven Levithan <http://stevenlevithan.com>
-// MIT license
-
-// Based on RegexPal 0.1.4
-// (c) 2007 Steven Levithan <http://regexpal.com>
-// GNU LGPL 3.0 license
-
-// Updated to work with XBL
-// Patrick Cloke (clokep@gmail.com), 2010
-
-// This relies on the following CSS for highlighting:
-/*
-.regex {font-family: Monospace;}
-.regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
-.regex .b {background: #aad1f7;}
-.regex .i {background: #f9ca69;}
-.regex .i .b {background: #f7a700;}
-.regex .i .u {background: #efba4a;}
-.regex .b.g1 {background: #d2f854;}
-.regex .b.g2 {background: #9ec70c;}
-.regex .b.g3 {background: #ecc9f7;}
-.regex .b.g4 {background: #54b70b;}
-.regex .b.g5 {background: #b688cf;}
-.regex .b.err {background: #ff4300;}
-*/
--->
+<!-- ***** BEGIN LICENSE BLOCK *****
+   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
+   -
+   - The contents of this file are subject to the Mozilla Public License Version
+   - 1.1 (the "License"); you may not use this file except in compliance with
+   - the License. You may obtain a copy of the License at
+   - http://www.mozilla.org/MPL/
+   -
+   - Software distributed under the License is distributed on an "AS IS" basis,
+   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+   - for the specific language governing rights and limitations under the
+   - License.
+   -
+   - The Original Code is the Auto Link code.
+   -
+   - The Initial Developer of the Original Code is
+   - Patrick Cloke <clokep@gmail.com>.
+   - Portions created by the Initial Developer are Copyright (C) 2010
+   - the Initial Developer. All Rights Reserved.
+   -
+   - Contributor(s):
+   -
+   - Alternatively, the contents of this file may be used under the terms of
+   - either the GNU General Public License Version 2 or later (the "GPL"), or
+   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+   - in which case the provisions of the GPL or the LGPL are applicable instead
+   - of those above. If you wish to allow use of your version of this file only
+   - under the terms of either the GPL or the LGPL, and not to allow others to
+   - use your version of this file under the terms of the MPL, indicate your
+   - decision by deleting the provisions above and replace them with the notice
+   - and other provisions required by the GPL or the LGPL. If you do not delete
+   - the provisions above, a recipient may use your version of this file under
+   - the terms of any one of the MPL, the GPL or the LGPL.
+   -
+   - ***** END LICENSE BLOCK ***** -->
 
 <bindings xmlns="http://www.mozilla.org/xbl"
 		  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -47,16 +54,16 @@
 			</xul:stack>
 			<xul:checkbox anonid="global" label="g"
 						  xbl:inherits="checked=global,collapsed=hideFlags"
-						  checked="false"/>
+						  checked="false" tooltiptext="global"/>
 			<xul:checkbox anonid="ignoreCase" label="i"
 						  xbl:inherits="checked=ignoreCase,collapsed=hideFlags"
-						  checked="true"/>
+						  checked="true" tooltiptext="ignore case"/>
 			<xul:checkbox anonid="multiline" label="m"
 						  xbl:inherits="checked=multiline,collapsed=hideFlags"
-						  checked="false"/>
+						  checked="false" tooltiptext="multiline"/>
 			<xul:checkbox anonid="sticky" label="y"
 						  xbl:inherits="checked=sticky,collapsed=hideFlags"
-						  checked="false"/>
+						  checked="false" tooltiptext="sticky"/>
 			<xul:checkbox label="Syntax Highlighting"
 						  anonid="syntax"
 						  xbl:inherits="checked=syntax,collapsed=hideSyntaxFlag"
@@ -220,6 +227,30 @@
 				<parameter name="value"/>
 				<body>
 					<![CDATA[
+						// JavaScript Regex Syntax Highlighter 0.1
+						// (c) 2010 Steven Levithan <http://stevenlevithan.com>
+						// MIT license
+
+						// Based on RegexPal 0.1.4
+						// (c) 2007 Steven Levithan <http://regexpal.com>
+						// GNU LGPL 3.0 license
+
+						// This relies on the following CSS for highlighting:
+						/*
+						.regex {font-family: Monospace;}
+						.regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
+						.regex .b {background: #aad1f7;}
+						.regex .i {background: #f9ca69;}
+						.regex .i .b {background: #f7a700;}
+						.regex .i .u {background: #efba4a;}
+						.regex .b.g1 {background: #d2f854;}
+						.regex .b.g2 {background: #9ec70c;}
+						.regex .b.g3 {background: #ecc9f7;}
+						.regex .b.g4 {background: #54b70b;}
+						.regex .b.g5 {background: #b688cf;}
+						.regex .b.err {background: #ff4300;}
+						*/
+
 						//--------------------------
 						// Supporting code...
 						//--------------------------
