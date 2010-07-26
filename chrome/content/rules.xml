@@ -43,14 +43,14 @@
 					xmlns:xbl="http://www.mozilla.org/xbl">
 
 	<binding id="ruleitem" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+		<resources>
+			<stylesheet src="chrome://autolink/content/rules.css"/>
+		</resources>
 		<content>
 			<xul:vbox flex="1">
-				<!-- Possibly include a name -->
-				<xul:hbox align="baseline">
-					<xul:label crop="end" control="user" value="Account Name"/>
-					<xul:regexp anonid="accountName" hideFlags="true" highlightSyntax="false" flex="1"/>
-					<xul:label crop="end" control="channel" value="Conversation Name"/>
-					<xul:regexp anonid="conversationName" hideFlags="true" highlightSyntax="false" flex="1"/>
+				<xul:hbox anonid="nameRow" align="baseline">
+					<xul:label crop="end" control="name" value="Rule Name"/>
+					<xul:textbox anonid="name" flex="1"/>
 					<xul:button anonid="protocols" type="menu" label="Choose Protocols">
 						<xul:menupopup anonid="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 							<xul:menuitem anonid="prplAll" label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
@@ -60,13 +60,19 @@
 						</xul:menupopup>
 					</xul:button>
 				</xul:hbox>
-				<xul:hbox align="baseline">
+				<xul:hbox anonid="miscRow" align="baseline">
+					<xul:label crop="end" control="accountName" value="Account Name"/>
+					<xul:regexp anonid="accountName" oncommand="copy('accountNameLabel');" hideFlags="true" highlightSyntax="false" flex="1"/>
+					<xul:label crop="end" control="conversationName" value="Conversation Name"/>
+					<xul:regexp anonid="conversationName" hideFlags="true" highlightSyntax="false" flex="1"/>
+				</xul:hbox>
+				<xul:hbox anonid="patternRow" align="baseline">
 					<xul:label crop="end" control="pattern" value="Pattern"/>
 					<xul:regexp anonid="pattern" global="true" flex="1"/>
 				</xul:hbox>
-				<xul:hbox align="baseline">
-					<xul:label crop="end" control="link" value="Link HREF"/>
-					<xul:textbox anonid="link" xbl:inherits="value=link" flex="1"/>
+				<xul:hbox anonid="linkRow" align="baseline">
+					<xul:label crop="end" control="link" value="Link URL"/>
+					<xul:textbox anonid="link" xbl:inherits="value=link" flex="2"/>
 					<xul:label crop="end" control="title" value="Link Title"/>
 					<xul:textbox anonid="title" xbl:inherits="value=title" flex="1"/>
 				</xul:hbox>
@@ -78,22 +84,14 @@
 				<parameter name="aProtos"/>
 				<body>
 					<![CDATA[
-						dump("Start");
-						this._rule = aRule;
-						//this.setAttribute("name", aAccount.name);
 						document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
 						document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
 						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern
 						this.setAttribute("link", aRule.link);
 						this.setAttribute("title", aRule.title);
 
-						//var proto = aAccount.protocol;
-						//this.setAttribute("protocol", proto.name);
-						//this.setAttribute("prplicon", proto.iconBaseURI + "icon32.png");
-
 						var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
 						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSep2");
-dump(aRule.protocols.length);
 						aProtos.forEach(function(proto) {
 							let menuitem = document.createElement("menuitem");
 							menuitem.setAttribute("label", proto.name);

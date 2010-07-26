@@ -44,7 +44,7 @@
 		</resources>
 		<content>
 			<xul:stack xbl:inherits="flex" align="center">
-				<xul:label anonid="regexBackground" class="monospace" style="-moz-appearance: textfield;"/>
+				<xul:label anonid="regexpBackground" class="monospace" style="-moz-appearance: textfield;"/>
 				<xul:textbox xbl:inherits="value=source" anonid="source"
 							 oninput="parse();" class="plain monospace"/>
 			</xul:stack>
@@ -211,7 +211,7 @@
 							return parsedDOM;
 						}
 
-						let regex_bg = document.getAnonymousElementByAttribute(this, "anonid", "regexBackground");
+						let regex_bg = document.getAnonymousElementByAttribute(this, "anonid", "regexpBackground");
 						// Remove all current children (there should only be one)
 						while (regex_bg.childNodes.length >= 1)
 							regex_bg.removeChild(regex_bg.firstChild);

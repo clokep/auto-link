@@ -69,7 +69,7 @@ function loadRules() {
 		rule.accountName = stringToRegex(rule.accountName);
 		rule.conversationName = stringToRegex(rule.conversationName);
 
-		let elt = document.createElement("ruleitem");
+		let elt = document.createElement("richlistitem"); // Really its a ruleitem, but we want richlistitem's styles
 		document.getElementById("rules").appendChild(elt);
 		elt.build(rule, protos);
 	}

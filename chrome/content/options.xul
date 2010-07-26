@@ -38,6 +38,7 @@
  - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://instantbird/skin/richlistbox.css" type="text/css"?>
 <?xml-stylesheet href="chrome://autolink/content/bindings.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
@@ -140,64 +141,6 @@
 		
 		<description value="Help!" popup="helpPanel"/>
 
-		<richlistbox id="rules" rows="3">
-			<richlistitem>
-				<vbox flex="1">
-					<hbox align="baseline">
-						<label crop="end" control="user" value="Account Name"/>
-						<regexp id="user" hideFlags="true" highlightSyntax="false" source="clokep.*" flex="1"/>
-						<label crop="end" control="channel" value="Conversation Name"/>
-						<regexp id="channel" hideFlags="true" highlightSyntax="false" source="#(instant|song)bird" flex="1"/>
-						<button id="protocols" type="menu" label="Choose Protocols">
-							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
-								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
-								<menuitem label="All" class="menuitem-iconic" type="checkbox" image="chrome://prpl-aim/skin/icon32.png"/>
-								<menuitem label="All" class="menuitem-iconic" image="chrome://prpl-aim/skin/icon32.png"/>
-								<menuseparator/>
-								<menuseparator id="prplMenuSep2"/>
-								<menuitem label="Close"/>
-							</menupopup>
-						</button>
-					</hbox>
-					<hbox align="baseline">
-						<label crop="end" control="pattern" value="Pattern"/>
-						<regexp id="pattern" global="true" source="bug[ #]*(\d+?)" flex="1"/>
-					</hbox>
-					<hbox align="baseline">
-						<label crop="end" control="linkHref" value="Link HREF"/>
-						<textbox id="linkHref" value="https://bugzilla.instantbird.org/show_bug.cgi?$1" flex="1"/>
-						<label crop="end" control="linkTitle" value="Link Title"/>
-						<textbox id="linkTitle" value="Bug #$1 @ Instantbird's Bugzilla" flex="1"/>
-					</hbox>
-				</vbox>
-			</richlistitem>
-			<richlistitem>
-				<vbox flex="1">
-					<!-- Possibly include a name -->
-					<hbox align="baseline">
-						<label crop="end" control="user" value="Account Name:"/>
-						<label crop="end" value="clokep.*" flex="1"/>
-						<label crop="end" control="channel" value="Conversation Name:"/>
-						<label crop="end" value="#(instant|song)bird" flex="1"/>
-						<label crop="end" control="channel" value="Protocol Names:"/>
-						<label crop="end" id="protocols" type="menu" value="AIM, Google Talk, IRC" flex="1"/>
-					</hbox>
-					<hbox align="baseline">
-						<label crop="end" control="pattern" value="Pattern:"/>
-						<label value="/"/>
-						<label id="pattern" value="bug[ #]*(\d+?)"/>
-						<label value="/"/>
-						<label id="flags" value="gi"/>
-						<spacer flex="1"/>
-					</hbox>
-					<hbox align="baseline">
-						<label crop="end" control="linkHref" value="Link HREF:"/>
-						<label id="linkHref" value="https://bugzilla.instantbird.org/show_bug.cgi?$1" flex="1"/>
-						<label crop="end" control="linkTitle" value="Link Title:"/>
-						<label id="linkTitle" value="Bug #$1 @ Instantbird's Bugzilla" flex="1"/>
-					</hbox>
-				</vbox>
-			</richlistitem>
-		</richlistbox>
+		<richlistbox id="rules" flex="1" rows="3"/>
 	</prefpane>
 </prefwindow>

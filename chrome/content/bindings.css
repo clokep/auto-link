@@ -2,6 +2,7 @@ regexp {
 	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp');
 }
 
-ruleitem {
+/* Overwrite richlistitem so we can steal its styles */
+richlistitem {
 	-moz-binding: url('chrome://autolink/content/rules.xml#ruleitem');
 }
