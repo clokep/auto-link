@@ -1,7 +1,3 @@
-regexp {
-	-moz-binding: url('regexp.xml#regexp');
-}
-
 /* JavaScript Regex Syntax Highlighter 0.1
  * (c) 2010 Steven Levithan <http://stevenlevithan.com>
  * MIT license
@@ -11,7 +7,7 @@ regexp {
  * GNU LGPL 3.0 license
  *
  * Updated to work with XML
- * Patrick Cloke (clokep@gmail.com), 2010
+ * Patrick Cloke <clokep@gmail.com>, 2010
  */
 
 .regex {font-family: Monospace;}

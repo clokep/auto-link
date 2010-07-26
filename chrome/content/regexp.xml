@@ -32,6 +32,9 @@
 		  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		  xmlns:xbl="http://www.mozilla.org/xbl">
 	<binding id="regexp" extends="xul:hbox">
+		<resources>
+			<stylesheet src="chrome://autolink/content/regexp.css"/>
+		</resources>
 		<content>
 			<xul:stack xbl:inherits="flex" style="padding-left: 3px;">
 				<xul:textbox anonid="textbox_background"

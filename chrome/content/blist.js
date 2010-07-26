@@ -66,10 +66,24 @@ var autoLink = {
 				let conversation = aObject._conv;
 				// Loop over each ruleset
 				for each (var rule in rules) {
+					rule.rule = autoLink.stringToRegex(rule.rule);
+					rule.users = autoLink.stringToRegex(rule.users);
+					rule.rooms = autoLink.stringToRegex(rule.rooms);
+
+					// Count the number of capturing groups: ( )
+					// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
+					rule.capturingGroups = 0;
+					for (var i = 0; i < (rule.rule.source.length - 1); i++)
+						if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
+							rule.capturingGroups++;
+						else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
+							i++; // Skip the next char
+
 					// Check that the user/room names & protocol are valid
-					if (autoLink.inArray(conversation.account.protocol.id, rule.protocols)
-						&& autoLink.inArray(conversation.account.name, rule.users)
-						&& autoLink.inArray(conversation.name, rule.rooms)) {
+					if ((conversation.account.protocol.id in rule.protocols
+							|| !rule.protocols.length)
+						&& rule.users.test(conversation.account.name)
+						&& rule.rooms.test(conversation.name)) {
 							// Add rule to current conversation
 							aObject.addTextModifier(autoLink.getLinkModifier(rule));
 					}
@@ -85,12 +99,11 @@ var autoLink = {
 		}
 	},
 	
-	// Check if a string is in an array, case insensitive
-	inArray: function(aString,aArray) {
-		return aArray.some(function(aRegExp) {
-			return (new RegExp(aRegExp, "i")).test(aString);
-		});
-	},
+	// Reforms a regular expression from a string
+	stringToRegex(str) {
+		let separator = str.lastIndexOf('/');
+		return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
+	}
 	
 	// This will convert between "some string $1" to "some string " + matches[0]
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
@@ -111,16 +124,9 @@ var autoLink = {
 	getLinkModifier: function(rule) {
 		return (function(aNode) {
 			// Probably needs a try block around it (or maybe we should try it before trying to add the rule?)
-			let expression = new RegExp(rule.pattern, rule.flags);
+			let expression = rule.rule;
 
-			let capturingGroups = 0;
-			// Count the number of capturing groups: ( )
-			// We don't want non-caputring or look-aheads: (?: ), (?= ), (?! )
-			for (var i = 0; i < (rule.pattern.length - 1); i++)
-				if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
-					capturingGroups++;
-				else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
-					i++; // Skip the next char
+			let capturingGroups = rule.capturingGroups;
 
 			let result = 0;
 			let lastIndex = 0;

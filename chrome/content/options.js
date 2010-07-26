@@ -66,32 +66,6 @@ function loadSupportedProtocols() {
 	});
 }
 
-function doShowPopup(event) {
-	/*let value = treeElement.view.getCellValue(row, col);
-	let ruleProtocols = JSON.parse(value ? value : []);
-	let menu = document.getElementById("prplMenu");
-	for each (var protocol in supportedProtocols)
-		menu.getElementById(protocol.name).setAttribute("checked", protocol.checked);*/
-}
-
-function closePopup(event) {
-	// See https://developer.mozilla.org/en/XUL/menupopup
-	/*let treeElement = document.getElementById("thetree");
-	let treeCell = treeElement.currentIndex;
-	treeElement.view.getCellText(treeElement.currentIndex, treeElement.columns.getColumnAt(0));
-	dump(treeCell);
-	dump(treeCell.tagName);
-
-  let ruleProtocols = [];
-	for each (var protocol in supportedProtocols) {
-		let menuitem = document.getElementById("prplMenu");
-		ruleProtocols.push({"name" : menuitem.id, "checked" : menuitem.hasAttribute("checked")});
-		menuitem.setAttribute("checked", false); // Reset
-	}
-
-	treeElement.view.setCellValue(treeCellIndex, treeElement.columns.getNamedColumn("protocol"), JSON.stringify(ruleProtocols));*/
-}
-
 window.addEventListener("load",
 						(function(e) {
 							loadSupportedProtocols();

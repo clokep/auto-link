@@ -1,0 +1,3 @@
+regexp {
+	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp');
+}

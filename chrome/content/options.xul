@@ -38,7 +38,7 @@
  - ***** END LICENSE BLOCK ***** -->
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="regexp.css" type="text/css"?>
+<?xml-stylesheet href="chrome://autolink/content/bindings.css" type="text/css"?>
 
 <prefwindow id="autoLink-prefwindow"
             title="Auto Link Options"
@@ -219,22 +219,19 @@
 		<richlistbox>
 			<richlistitem>
 				<vbox flex="1">
-					<hbox style="-moz-box-align: center;">
-						<label crop="end" class="regexpName" value="Pattern"/>
-						<regexp g="true" value="bug (\d+?)" flex="1"/>
+					<hbox align="baseline">
+						<label crop="end" control="pattern" class="regexpName" value="Pattern"/>
+						<regexp id="pattern" g="true" value="bug (\d+?)" flex="1"/>
 					</hbox>
-					<hbox style="-moz-box-align: center;">
-						<label crop="end" class="regexpName" value="User Name"/>
-						<regexp hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
-						<label crop="end" class="regexpName" value="Buddy/Room Name"/>
-						<regexp hideflags="true" highlightSyntax="false" value="#.+" flex="1"/>
+					<hbox align="baseline">
+						<label crop="end" control="user" class="regexpName" value="Account Name"/>
+						<regexp id="user" hideflags="true" highlightSyntax="false" value=".+" flex="1"/>
+						<label crop="end" control="channel" class="regexpName" value="Buddy/Room Name"/>
+						<regexp id="channel" hideflags="true" highlightSyntax="false" value="#.+" flex="1"/>
 						<button id="protocols" type="menu" label="Choose Protocols">
 							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
 								<menuseparator/>
-								<!--<menuitem label="AIM" id="prpl-aim" type="checkbox" closemenu="none"/>
-								<menuitem label="MSN" id="prpl-msn" type="checkbox" closemenu="none"/>
-								<menuitem label="Yahoo!" id="prpl-ymsgr" type="checkbox" closemenu="none"/>-->
 								<menuseparator id="prplMenuSep2"/>
 								<menuitem label="Close"/>
 							</menupopup>
