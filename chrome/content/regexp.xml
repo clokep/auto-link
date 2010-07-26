@@ -41,54 +41,151 @@
 							 style="margin-left: -3px;"/>
 				<xul:label anonid="regexBackground" class="plain monospace"
 						   style="margin: 0; padding: 0; padding-left: 1px; padding-top: 5px;"/>
-				<xul:textbox xbl:inherits="value" anonid="regexTextbox"
+				<xul:textbox xbl:inherits="value=source" anonid="source"
 							 oninput="parse();" class="plain monospace"
 							 style="margin: 0; padding: 0; margin-left: 0px;"/>
 			</xul:stack>
-			<xul:checkbox label="g" xbl:inherits="checked=g,collapsed=hideflags"
+			<xul:checkbox anonid="global" label="g"
+						  xbl:inherits="checked=global,collapsed=hideflags"
 						  checked="false"/>
-			<xul:checkbox label="i" xbl:inherits="checked=i,collapsed=hideflags"
+			<xul:checkbox anonid="ignoreCase" label="i" xbl:inherits="checked=ignoreCase,collapsed=hideflags"
 						  checked="true"/>
-			<xul:checkbox label="m" xbl:inherits="checked=m,collapsed=hideflags"
+			<xul:checkbox anonid="multiline" label="m" xbl:inherits="checked=multiline,collapsed=hideflags"
 						  checked="false"/>
-			<xul:checkbox label="y" xbl:inherits="checked=y,collapsed=hideflags"
+			<xul:checkbox anonid="sticky" label="y" xbl:inherits="checked=sticky,collapsed=hideflags"
 						  checked="false"/>
 			<xul:checkbox label="Syntax Highlighting"
 						  anonid="highlightSyntax"
 						  xbl:inherits="checked=highlightSyntax,collapsed=hideflags"
 						  checked="true" oncommand="parse()"/>
 		</content>
-		  <implementation>
+		<implementation>
+			<property name="source">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("source");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("source", val);
+					]]>
+				</setter>
+			</property>
+			<property name="global">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("global");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("global", val);
+					]]>
+				</setter>
+			</property>
+			<property name="ignoreCase">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("ignoreCase");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("ignoreCase", val);
+					]]>
+				</setter>
+			</property>
+			<property name="multiline">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("multiline");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("multiline", val);
+					]]>
+				</setter>
+			</property>
+			<property name="sticky">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("sticky");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("sticky", val);
+					]]>
+				</setter>
+			</property>
+			<property name="highlightSyntax">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("highlightSyntax");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("highlightSyntax", val);
+					]]>
+				</setter>
+			</property>
+			<constructor>
+				<![CDATA[
+					// Just highlight for now
+					this.parse();
+				]]>
+			</constructor>
+			<method name="build">
+				<parameter name="aRegExp"/>
+				<body>
+					<![CDATA[
+						this.source = aRegExp.source;
+						this.global = aRegExp.global;
+						this.ignoreCase = aRegExp.ignoreCase;
+						this.multiline = aRegExp.multiline;
+						this.sticky = aRegExp.sticky;
+
+						this.parse();
+					]]>
+				</body>
+			</method>
 			<method name="parse">
 				<body>
 					<![CDATA[
+						this.source = document.getAnonymousElementByAttribute(this, "anonid", "source").value;
+						this.global = document.getAnonymousElementByAttribute(this, "anonid", "global").hasAttribute("checked");
+						this.ignoreCase = document.getAnonymousElementByAttribute(this, "anonid", "ignoreCase").hasAttribute("checked");
+						this.multiline = document.getAnonymousElementByAttribute(this, "anonid", "multiline").hasAttribute("checked");
+						this.sticky = document.getAnonymousElementByAttribute(this, "anonid", "sticky").hasAttribute("checked");
+
+						this.highlightSyntax = document.getAnonymousElementByAttribute(this, "anonid", "highlightSyntax").hasAttribute("checked");
+					
 						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
 						function  HTMLParser(aHTMLString){
-							var parseDOM = document.createElement('div');
-							parseDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
-														   .getService(Components.interfaces.nsIScriptableUnescapeHTML) 
-														   .parseFragment(aHTMLString, false, null, parseDOM));
-							return parseDOM;
+							var parsedDOM = document.createElement('div');
+							parsedDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
+														    .getService(Components.interfaces.nsIScriptableUnescapeHTML) 
+														    .parseFragment(aHTMLString, false, null, parsedDOM));
+							return parsedDOM;
 						}
-					
+
 						let regex_bg = document.getAnonymousElementByAttribute(this, "anonid", "regexBackground");
-						// Remove all current children
-						while (regex_bg.childNodes.length >= 1 )
+						// Remove all current children (there should only be one)
+						while (regex_bg.childNodes.length >= 1)
 							regex_bg.removeChild(regex_bg.firstChild);
 
-						// If we don't want syntax highlight then don't do any
-						if (!document.getAnonymousElementByAttribute(this, "anonid", "highlightSyntax").hasAttribute("checked"))
+						// If we don't want syntax highlighting then don't do anything
+						if (!this.highlightSyntax)
 							return;
 
-						let regex = document.getAnonymousElementByAttribute(this, "anonid", "regexTextbox");
-						let text = regex.value;
+						let doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(this.source) + "</label>")
 
-						let doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(text) + "</label>")
-
-						// Replace with new children
-						for (var i = 0; i < doc.childNodes.length; i++) {
+						// Append new children
+						for (var i = 0; i < doc.childNodes.length; i++)
 							regex_bg.appendChild(doc.childNodes[i]);
-						}
 					]]>
 				</body>
 			</method>

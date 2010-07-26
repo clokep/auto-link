@@ -65,9 +65,17 @@ function loadSupportedProtocols() {
 		menu.insertBefore(menuitem, insertBefore);
 	});
 }
+ 
+function doShowPopup(event) {
+}
+function closePopup(event) {
+}
 
 window.addEventListener("load",
 						(function(e) {
 							loadSupportedProtocols();
+							let elt = document.createElement("regexp");
+							document.getElementById('testPattern').parentNode.appendChild(elt);
+							elt.build(new RegExp(/bug[ #]+(\d+)/gimy));
 						}),
 						false);

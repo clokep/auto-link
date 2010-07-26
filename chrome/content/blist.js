@@ -82,8 +82,8 @@ var autoLink = {
 					// Check that the user/room names & protocol are valid
 					if ((conversation.account.protocol.id in rule.protocols
 							|| !rule.protocols.length)
-						&& rule.users.test(conversation.account.name)
-						&& rule.rooms.test(conversation.name)) {
+						&& rule.users.test(conversation.account.name) // XXX Does this work if your account has an alias?
+						&& rule.rooms.test(conversation.name)) { // XXX Does this work if you have an alias for the buddy?
 							// Add rule to current conversation
 							aObject.addTextModifier(autoLink.getLinkModifier(rule));
 					}
@@ -100,7 +100,7 @@ var autoLink = {
 	},
 	
 	// Reforms a regular expression from a string
-	stringToRegex(str) {
+	stringToRegex: function(str) {
 		let separator = str.lastIndexOf('/');
 		return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
 	}
