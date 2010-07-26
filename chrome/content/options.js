@@ -14,7 +14,7 @@
  * The Original Code is Auto Link code.
  *
  * The Initial Developer of the Original Code is
- * Patrick Cloke (clokep@gmail.com).
+ * Patrick Cloke <clokep@gmail.com>.
  * Portions created by the Initial Developer are Copyright (C) 2010
  * the Initial Developer. All Rights Reserved.
  *
@@ -40,30 +40,15 @@ function dump(aMessage) {
 	consoleService.logStringMessage("Auto-Link: " + aMessage);
 }
 
-var supportedProtocols = [];
+var protos = [];
 function loadSupportedProtocols() {
-	var menu = document.getElementById("prplMenu");
-	var insertBefore = document.getElementById("prplMenuSep2");
-
 	var pcs = Cc["@instantbird.org/purple/core;1"]
 				 .getService(Ci.purpleICoreService);
 
-	var protos = [];
 	for (var proto in getIter(pcs.getProtocols())) {
 		protos.push(proto);
 	}
 	protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-	protos.forEach(function(proto) {
-		supportedProtocols.push([proto.id, proto.name]);
-
-		let menuitem = document.createElement("menuitem");
-		menuitem.setAttribute("label", proto.name);
-		menuitem.setAttribute("id", proto.id);
-		menuitem.setAttribute("type", "checkbox");
-		menuitem.setAttribute("closemenu", "none");
-
-		menu.insertBefore(menuitem, insertBefore);
-	});
 }
 
 function loadRules() {
@@ -78,29 +63,15 @@ function loadRules() {
 		// Should probably throw an error
 	}
 
-	// See http://lxr.instantbird.org/instantbird/source/purple/purplexpcom/public/purpleIConversation.idl
-	let conversation = aObject._conv;
 	// Loop over each ruleset
 	for each (var rule in rules) {
-		rule.pattern = autoLink.stringToRegex(rule.pattern);
-		rule.accountName = autoLink.stringToRegex(rule.accountName);
-		rule.conversationName = autoLink.stringToRegex(rule.conversationName);
+		rule.pattern = stringToRegex(rule.pattern);
+		rule.accountName = stringToRegex(rule.accountName);
+		rule.conversationName = stringToRegex(rule.conversationName);
 
-		// Count the number of capturing groups: ( )
-		// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
-		/*rule.capturingGroups = 0;
-		for (var i = 0; i < (rule.rule.source.length - 1); i++)
-			if (rule.pattern.charAt(i) == "(" && rule.pattern.charAt(i + 1) != "?")
-				rule.capturingGroups++;
-			else if (rule.pattern.charAt(i) == "\\") // If we're escaping then we don't care about the next char
-				i++; // Skip the next char
-		*/
 		let elt = document.createElement("ruleitem");
-		document.getElementById("rules").parentNode.appendChild(elt);
-		elt.build(rule.pattern, rule.accountName, rule.conversationName);
-		elt.ignoreCase = false;
-		elt.hideFlags = false;
-		elt.hideHighlightSyntaxFlag = true;
+		document.getElementById("rules").appendChild(elt);
+		elt.build(rule, protos);
 	}
 }
 	

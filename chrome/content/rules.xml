@@ -48,254 +48,74 @@
 				<!-- Possibly include a name -->
 				<xul:hbox align="baseline">
 					<xul:label crop="end" control="user" value="Account Name"/>
-					<xul:regexp id="user" hideFlags="true" highlightSyntax="false" source="clokep.*" flex="1"/>
+					<xul:regexp anonid="accountName" hideFlags="true" highlightSyntax="false" flex="1"/>
 					<xul:label crop="end" control="channel" value="Conversation Name"/>
-					<xul:regexp id="channel" hideFlags="true" highlightSyntax="false" source="#(instant|song)bird" flex="1"/>
-					<xul:button id="protocols" type="menu" label="Choose Protocols">
-						<xul:menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
-							<xul:menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+					<xul:regexp anonid="conversationName" hideFlags="true" highlightSyntax="false" flex="1"/>
+					<xul:button anonid="protocols" type="menu" label="Choose Protocols">
+						<xul:menupopup anonid="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
+							<xul:menuitem anonid="prplAll" label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
 							<xul:menuseparator/>
-							<xul:menuseparator id="prplMenuSep2"/>
+							<xul:menuseparator anonid="prplMenuSep2"/>
 							<xul:menuitem label="Close"/>
 						</xul:menupopup>
 					</xul:button>
 				</xul:hbox>
 				<xul:hbox align="baseline">
 					<xul:label crop="end" control="pattern" value="Pattern"/>
-					<xul:regexp id="pattern" global="true" source="bug[ #]*(\d+?)" flex="1"/>
+					<xul:regexp anonid="pattern" global="true" flex="1"/>
 				</xul:hbox>
 				<xul:hbox align="baseline">
-					<xul:label crop="end" control="linkHref" value="Link HREF"/>
-					<xul:textbox id="linkHref" value="https://bugzilla.instantbird.org/show_bug.cgi?$1" flex="1"/>
-					<xul:label crop="end" control="linkTitle" value="Link Title"/>
-					<xul:textbox id="linkTitle" value="Bug #$1 @ Instantbird's Bugzilla" flex="1"/>
+					<xul:label crop="end" control="link" value="Link HREF"/>
+					<xul:textbox anonid="link" xbl:inherits="value=link" flex="1"/>
+					<xul:label crop="end" control="title" value="Link Title"/>
+					<xul:textbox anonid="title" xbl:inherits="value=title" flex="1"/>
 				</xul:hbox>
 			</xul:vbox>
 		</content>
 		<implementation>
 			<method name="build">
 				<parameter name="aRule"/>
-				<parameter name="aAccountName"/>
-				<parameter name="aConversationName"/>
-				<parameter name="aProtocols"/>
-				<parameter name="aLinkHref"/>
-				<parameter name="aLinkTitle"/>
+				<parameter name="aProtos"/>
 				<body>
-				<![CDATA[
-					this._account = aAccount;
-					this.setAttribute("name", aAccount.name);
-					this.setAttribute("id", aAccount.id);
-					var proto = aAccount.protocol;
-					this.setAttribute("protocol", proto.name);
-					this.setAttribute("prplicon", proto.iconBaseURI + "icon32.png");
-					var state = "Unknown";
-					if (this._account.connected) {
-						state = "connected";
-						this.refreshConnectedLabel();
-					} else if (this._account.disconnected) {
-						state = "disconnected";
-						if (this._account.connectionErrorReason != Ci.purpleIAccount.NO_ERROR)
-							this.updateConnectionError();
-						else
-							this.removeAttribute("error");
-					} else if (this._account.connecting) {
-						state = "connecting";
-						this.updateConnectionState();
-					} else if (this._account.disconnecting) {
-						state = "connected";
-					}
-					this.setAttribute("state", state);
-					this.autoLogin = aAccount.autoLogin;
-				]]>
-				</body>
-			</method>
-
-			<method name="updateConnectionState">
-				<body>
-				<![CDATA[
-					var bundle = document.getElementById("accountsBundle");
-					const key = "account.connection.progress";
-					var text = this._account.connectionStateMsg;
-					text = text ? bundle.getFormattedString(key, [text])
-											: bundle.getString("account.connecting");
-
-					var progress = document.getAnonymousElementByAttribute(this, "anonid",
-																																"connecting");
-					progress.setAttribute("value", text);
-					this._cancelReconnectTimer();
-				]]>
-				</body>
-			</method>
-
-			<method name="updateConnectionError">
-				<body>
-				<![CDATA[
-					var bundle = document.getElementById("accountsBundle");
-					const key = "account.connection.error";
-					var account = this._account;
-					var text;
-					let errorReason = account.connectionErrorReason;
-					if (errorReason == Ci.purpleIAccount.ERROR_UNKNOWN_PRPL)
-						text = bundle.getFormattedString(key + "UnknownPrpl",
-																						[account.protocol.id]);
-					else if (errorReason == Ci.purpleIAccount.ERROR_MISSING_PASSWORD)
-						text = bundle.getString(key + "MissingPassword");
-					else if (errorReason == Ci.purpleIAccount.ERROR_CRASHED)
-						text = bundle.getString(key + "CrashedAccount");
-					else
-						text = account.connectionErrorMessage;
-					text = bundle.getFormattedString(key, [text]);
-
-					this.setAttribute("error", "true");
-					var error = document.getAnonymousElementByAttribute(this, "anonid",
-																															"error");
-					error.textContent = text;
-
-					var self = this;
-					var updateReconnect = function() {
-						var date = Math.round((account.timeOfNextReconnect - Date.now()) / 1000);
-						let reconnect = "";
-						if (date > 0) {
-							let [val1, unit1, val2, unit2] = DownloadUtils.convertTimeUnits(date);
-							if (!val2)
-								reconnect = bundle.getFormattedString("account.reconnectInSingle",
-																											[val1, unit1])
-							else
-								reconnect = bundle.getFormattedString("account.reconnectInDouble",
-																											[val1, unit1, val2, unit2])
-						}
-						document.getAnonymousElementByAttribute(self, "anonid", "reconnect")
-										.textContent = reconnect;
-						return reconnect;
-					};
-					if (updateReconnect() && !this.reconnectUpdateInterval) {
-						this.setAttribute("reconnectPending", "true");
-						this.reconnectUpdateInterval = setInterval(updateReconnect, 1000);
-						gAccountManager.disableCommandItems();
-					}
-				]]>
-				</body>
-			</method>
-
-			<method name="refreshConnectedLabel">
-				<body>
-				<![CDATA[
-					var bundle = document.getElementById("accountsBundle");
-					var date =
-						60 * Math.floor((Date.now() - this._account.timeOfLastConnect) / 60000);
-					let value;
-					if (date > 0) {
-						let [val1, unit1, val2, unit2] = DownloadUtils.convertTimeUnits(date);
-						if (!val2)
-							value = bundle.getFormattedString("account.connectedForSingle",
-																								[val1, unit1])
-						else
-							value = bundle.getFormattedString("account.connectedForDouble",
-																								[val1, unit1, val2, unit2])
-					}
-					else
-						value = bundle.getString("account.connectedForSeconds");
-					this.connectedLabel.value = value;
-				]]>
-				</body>
-			</method>
-
-			<method name="_cancelReconnectTimer">
-				<body>
-				<![CDATA[
-					this.removeAttribute("reconnectPending");
-					clearInterval(this.reconnectUpdateInterval);
-					delete this.reconnectUpdateInterval;
-					gAccountManager.disableCommandItems();
-				]]>
-				</body>
-			</method>
-
-			<method name="cancelReconnection">
-				<body>
-				<![CDATA[
-					if (this.reconnectUpdateInterval) {
-						this._cancelReconnectTimer();
-						this._account.cancelReconnection();
-					}
-				]]>
-				</body>
-			</method>
-
-			<method name="restoreItems">
-				<body>
-				<![CDATA[
-					// Called after a removal and reinsertion of the binding
-					this._buttons = null;
-					this._connectedLabel = null;
-					if (this._account.connected)
-						this.refreshConnectedLabel();
-					if (this._account.connectionErrorReason == Ci.purpleIAccount.NO_ERROR)
-						this.updateConnectionState();
-					else
-						this.updateConnectionError();
-				]]>
-				</body>
-			</method>
-
-			<property name="autoLogin">
-				<getter>
 					<![CDATA[
-						return this.hasAttribute("autologin");
-					]]>
-				</getter>
-				<setter>
-					<![CDATA[
-						if (val)
-							this.setAttribute("autologin", "true");
-						else
-							this.removeAttribute("autologin");
-						if (this._account.autoLogin != val)
-							this._account.autoLogin = val;
-						return val;
-					]]>
-				</setter>
-			</property>
+						dump("Start");
+						this._rule = aRule;
+						//this.setAttribute("name", aAccount.name);
+						document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
+						document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
+						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern
+						this.setAttribute("link", aRule.link);
+						this.setAttribute("title", aRule.title);
 
-			<property name="account" onget="return this._account;"/>
+						//var proto = aAccount.protocol;
+						//this.setAttribute("protocol", proto.name);
+						//this.setAttribute("prplicon", proto.iconBaseURI + "icon32.png");
 
-			<property name="connectedLabel">
-				<getter>
-					<![CDATA[
-						if (!this._connectedLabel)
-							this._connectedLabel =
-								document.getAnonymousElementByAttribute(this, "anonid", "connected");
-						return this._connectedLabel;
-					]]>
-				</getter>
-			</property>
+						var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
+						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSep2");
+dump(aRule.protocols.length);
+						aProtos.forEach(function(proto) {
+							let menuitem = document.createElement("menuitem");
+							menuitem.setAttribute("label", proto.name);
+							menuitem.setAttribute("id", proto.id);
+							menuitem.setAttribute("type", "checkbox");
+							menuitem.setAttribute("closemenu", "none");
+							menuitem.setAttribute("class", "menuitem-iconic"); // XXX type=checkbox can't support images
+							menuitem.setAttribute("image", proto.iconBaseURI + "icon32.png");
+							
+							if (aRule.protocols.some(function(protocol) {
+								return (proto.id.toLowerCase() == protocol.toLowerCase());
+							}))
+								menuitem.setAttribute("checked", "true");
 
-			<property name="buttons">
-				<getter>
-					<![CDATA[
-						if (!this._buttons)
-							this._buttons =
-								document.getAnonymousElementByAttribute(this, "anonid", "buttons");
-						return this._buttons;
+							menu.insertBefore(menuitem, insertBefore);
+						});
+
+						if (!aRule.protocols.length)
+							document.getAnonymousElementByAttribute(this, "anonid", "prplAll").setAttribute("checked", "true");
 					]]>
-				</getter>
-			</property>
+				</body>
+			</method>
 		</implementation>
-		<handlers>
-			<handler event="dblclick">
-				<![CDATA[
-					if (event.button == 0) {
-						// If we double clicked on a widget that has already done
-						// something with the first click, we should ignore the event
-						var localName = event.originalTarget.localName;
-						if (localName != "button" && localName != "checkbox")
-							this.buttons.proceedDefaultAction();
-					}
-
-					// Prevent from loading an account wizzard
-					event.stopPropagation();
-				]]>
-			</handler>
-		</handlers>
 	</binding>
 </bindings>

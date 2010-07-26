@@ -12,14 +12,20 @@
 
 .regex {font-family: Monospace;}
 .regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
-.regex .b {background-color: #aad1f7;}
-.regex .i {background-color: #f9ca69;}
-.regex .i.b {background-color: #f7a700;}
-.regex .i.u {background-color: #efba4a;}
-.regex .b.g1 {background-color: #d2f854;}
-.regex .b.g2 {background-color: #9ec70c;}
-.regex .b.g3 {background-color: #ecc9f7;}
-.regex .b.g4 {background-color: #54b70b;}
-.regex .b.g5 {background-color: #b688cf;}
-.regex .b.err {background-color: #ff4300;}
+.regex .b {background-color: #aad1f7; color: #aad1f7;}
+.regex .i {background-color: #f9ca69; color: #f9ca69;}
+.regex .i.b {background-color: #f7a700; color: #f7a700;}
+.regex .i.u {background-color: #efba4a; color: #efba4a;}
+.regex .b.g1 {background-color: #d2f854; color: #d2f854;}
+.regex .b.g2 {background-color: #9ec70c; color: #9ec70c;}
+.regex .b.g3 {background-color: #ecc9f7; color: #ecc9f7;}
+.regex .b.g4 {background-color: #54b70b; color: #54b70b;}
+.regex .b.g5 {background-color: #b688cf; color: #b688cf;}
+.regex .b.err {background-color: #ff4300; color: #ff4300;}
 
+textbox {
+	margin: 4px 6px !important; /* Includes border */
+	/*border: 2px solid;*/
+	padding: 2px 2px 3px !important;
+	-moz-padding-start: 7px !important;
+}

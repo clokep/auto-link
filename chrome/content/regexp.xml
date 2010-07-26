@@ -43,14 +43,10 @@
 			<stylesheet src="chrome://autolink/content/regexp.css"/>
 		</resources>
 		<content>
-			<xul:stack xbl:inherits="flex" style="padding-left: 3px;">
-				<xul:textbox anonid="textbox_background"
-							 style="margin-left: -3px;"/>
-				<xul:label anonid="regexBackground" class="plain monospace"
-						   style="margin: 0; padding: 0; padding-left: 1px; padding-top: 5px;"/>
+			<xul:stack xbl:inherits="flex" align="center">
+				<xul:label anonid="regexBackground" class="monospace" style="-moz-appearance: textfield;"/>
 				<xul:textbox xbl:inherits="value=source" anonid="source"
-							 oninput="parse();" class="plain monospace"
-							 style="margin: 0; padding: 0; margin-left: 0px;"/>
+							 oninput="parse();" class="plain monospace"/>
 			</xul:stack>
 			<xul:checkbox anonid="global" label="g"
 						  xbl:inherits="checked=global,collapsed=hideFlags"
@@ -64,7 +60,7 @@
 			<xul:checkbox anonid="sticky" label="y"
 						  xbl:inherits="checked=sticky,collapsed=hideFlags"
 						  checked="false" tooltiptext="sticky"/>
-			<xul:checkbox label="Syntax Highlighting"
+			<xul:checkbox label="Highlight Syntax"
 						  anonid="syntax"
 						  xbl:inherits="checked=syntax,collapsed=hideSyntaxFlag"
 						  checked="true" collapsed="true" oncommand="parse()"/>
@@ -166,26 +162,35 @@
 					]]>
 				</setter>
 			</property>
+			<property name="regexp">
+				<getter>
+					<![CDATA[
+						var flags = "";
+						flags += this.global ? "g" : "";
+						flags += this.ignoreCase ? "i" : "";
+						flags += this.multiline ? "m" : "";
+						flags += this.sticky ? "y" : "";
+						return (new RegExp(this.source, flags));
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.source = val.source;
+						this.global = val.global;
+						this.ignoreCase = val.ignoreCase;
+						this.multiline = val.multiline;
+						this.sticky = val.sticky;
+						
+						this.parse();
+					]]>
+				</setter>
+			</property>
 			<constructor>
 				<![CDATA[
 					// Just highlight for now
 					this.parse();
 				]]>
 			</constructor>
-			<method name="build">
-				<parameter name="aRegExp"/>
-				<body>
-					<![CDATA[
-						this.source = aRegExp.source;
-						this.global = aRegExp.global;
-						this.ignoreCase = aRegExp.ignoreCase;
-						this.multiline = aRegExp.multiline;
-						this.sticky = aRegExp.sticky;
-
-						this.parse();
-					]]>
-				</body>
-			</method>
 			<method name="parse">
 				<body>
 					<![CDATA[
@@ -476,9 +481,9 @@
 										// Record the group opening's position and character sequence so we can
 										// later mark it as invalid if it turns out to be unclosed in the remainder
 										// of the regex. The value of index is the position plus the length of the
-										// opening <b> element with group class ('<b class="gN">'.length).
+										// opening <b> element with group class ('<label class="b gN">'.length).
 										openGroups.push({
-											index:   output.length + 14,
+											index:   output.length + 20,
 											opening: m
 										});
 										// Add markup to the group-opening character sequence

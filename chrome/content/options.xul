@@ -140,10 +140,8 @@
 		
 		<description value="Help!" popup="helpPanel"/>
 
-		<richlistbox id="rules">
-			<ruleitem>
-			</ruleitem>
-			<!--<richlistitem>
+		<richlistbox id="rules" rows="3">
+			<richlistitem>
 				<vbox flex="1">
 					<hbox align="baseline">
 						<label crop="end" control="user" value="Account Name"/>
@@ -153,6 +151,8 @@
 						<button id="protocols" type="menu" label="Choose Protocols">
 							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+								<menuitem label="All" class="menuitem-iconic" type="checkbox" image="chrome://prpl-aim/skin/icon32.png"/>
+								<menuitem label="All" class="menuitem-iconic" image="chrome://prpl-aim/skin/icon32.png"/>
 								<menuseparator/>
 								<menuseparator id="prplMenuSep2"/>
 								<menuitem label="Close"/>
@@ -170,7 +170,7 @@
 						<textbox id="linkTitle" value="Bug #$1 @ Instantbird's Bugzilla" flex="1"/>
 					</hbox>
 				</vbox>
-			</richlistitem>-->
+			</richlistitem>
 			<richlistitem>
 				<vbox flex="1">
 					<!-- Possibly include a name -->
@@ -199,7 +199,5 @@
 				</vbox>
 			</richlistitem>
 		</richlistbox>
-
-		<regexp id="testPattern" g="true" value="bug[ #]*(\d+?)" flex="1"/>
 	</prefpane>
 </prefwindow>
