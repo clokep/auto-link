@@ -146,9 +146,9 @@
 					<!-- Possibly include a name -->
 					<hbox align="baseline">
 						<label crop="end" control="user" value="Account Name"/>
-						<regexp id="user" hideflags="true" highlightSyntax="false" source="clokep.*" flex="1"/>
+						<regexp id="user" hideFlags="true" highlightSyntax="false" source="clokep.*" flex="1"/>
 						<label crop="end" control="channel" value="Conversation Name"/>
-						<regexp id="channel" hideflags="true" highlightSyntax="false" source="#(instant|song)bird" flex="1"/>
+						<regexp id="channel" hideFlags="true" highlightSyntax="false" source="#(instant|song)bird" flex="1"/>
 						<button id="protocols" type="menu" label="Choose Protocols">
 							<menupopup id="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
 								<menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>

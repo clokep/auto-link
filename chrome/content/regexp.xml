@@ -46,18 +46,21 @@
 							 style="margin: 0; padding: 0; margin-left: 0px;"/>
 			</xul:stack>
 			<xul:checkbox anonid="global" label="g"
-						  xbl:inherits="checked=global,collapsed=hideflags"
+						  xbl:inherits="checked=global,collapsed=hideFlags"
 						  checked="false"/>
-			<xul:checkbox anonid="ignoreCase" label="i" xbl:inherits="checked=ignoreCase,collapsed=hideflags"
+			<xul:checkbox anonid="ignoreCase" label="i"
+						  xbl:inherits="checked=ignoreCase,collapsed=hideFlags"
 						  checked="true"/>
-			<xul:checkbox anonid="multiline" label="m" xbl:inherits="checked=multiline,collapsed=hideflags"
+			<xul:checkbox anonid="multiline" label="m"
+						  xbl:inherits="checked=multiline,collapsed=hideFlags"
 						  checked="false"/>
-			<xul:checkbox anonid="sticky" label="y" xbl:inherits="checked=sticky,collapsed=hideflags"
+			<xul:checkbox anonid="sticky" label="y"
+						  xbl:inherits="checked=sticky,collapsed=hideFlags"
 						  checked="false"/>
 			<xul:checkbox label="Syntax Highlighting"
-						  anonid="highlightSyntax"
-						  xbl:inherits="checked=highlightSyntax,collapsed=hideflags"
-						  checked="true" oncommand="parse()"/>
+						  anonid="syntax"
+						  xbl:inherits="checked=syntax,collapsed=hideSyntaxFlag"
+						  checked="true" collapsed="true" oncommand="parse()"/>
 		</content>
 		<implementation>
 			<property name="source">
@@ -123,12 +126,36 @@
 			<property name="highlightSyntax">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("highlightSyntax");
+						return this.getAttribute("syntax");
 					]]>
 				</getter>
 				<setter>
 					<![CDATA[
-						this.setAttribute("highlightSyntax", val);
+						this.setAttribute("syntax", val);
+					]]>
+				</setter>
+			</property>
+			<property name="hideFlags">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("hideFlags");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("hideFlags", val);
+					]]>
+				</setter>
+			</property>
+			<property name="hideHighlightSyntaxFlag">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("hideSyntaxFlag");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("hideSyntaxFlag", val);
 					]]>
 				</setter>
 			</property>
@@ -161,7 +188,7 @@
 						this.multiline = document.getAnonymousElementByAttribute(this, "anonid", "multiline").hasAttribute("checked");
 						this.sticky = document.getAnonymousElementByAttribute(this, "anonid", "sticky").hasAttribute("checked");
 
-						this.highlightSyntax = document.getAnonymousElementByAttribute(this, "anonid", "highlightSyntax").hasAttribute("checked");
+						this.syntax = document.getAnonymousElementByAttribute(this, "anonid", "syntax").hasAttribute("checked");
 					
 						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
 						function  HTMLParser(aHTMLString){
@@ -178,7 +205,7 @@
 							regex_bg.removeChild(regex_bg.firstChild);
 
 						// If we don't want syntax highlighting then don't do anything
-						if (!this.highlightSyntax)
+						if (!this.syntax)
 							return;
 
 						let doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReSyntax(this.source) + "</label>")

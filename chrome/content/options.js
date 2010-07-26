@@ -76,6 +76,9 @@ window.addEventListener("load",
 							loadSupportedProtocols();
 							let elt = document.createElement("regexp");
 							document.getElementById('testPattern').parentNode.appendChild(elt);
-							elt.build(new RegExp(/bug[ #]+(\d+)/gimy));
+							elt.build(new RegExp(/bug[ #]+(\d+)/giy));
+							elt.ignoreCase = false;
+							elt.hideFlags = false;
+							elt.hideHighlightSyntaxFlag = true;
 						}),
 						false);
