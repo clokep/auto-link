@@ -119,7 +119,7 @@
 				<body>
 					<![CDATA[
 						let rule = {};
-						rule.name = document.getAnonymousElementByAttribute(this, "anonid", "name").getAttribute("value");
+						rule.name = document.getAnonymousElementByAttribute(this, "anonid", "name").value;
 						rule.accountName = document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp.toString();
 						rule.conversationName = document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp.toString();
 						rule.pattern = document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp.toString();

@@ -88,8 +88,11 @@ function saveAll() {
 	for (var i = 0; i < ruleElements.length; i++)
 		rules.push(ruleElements[i].save());
 
-	dump(JSON.stringify(rules));
-	
+	var prefs =	Cc["@mozilla.org/preferences-service;1"]
+				  .getService(Ci.nsIPrefService)
+				  .getBranch("extensions.autolink.");
+
+	prefs.setCharPref("rules", JSON.stringify(rules));
 	return true;
 }
 
