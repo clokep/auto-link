@@ -1,4 +1,7 @@
+richlistitem:not([selected="true"]) button,
+richlistitem:not([selected="true"]) hbox[anonid="miscRow"],
 richlistitem:not([selected="true"]) regexp label[anonid="regexpBackground"],
+richlistitem:not([selected="true"]) regexp checkbox,
 richlistitem:not([selected="true"]) hbox[anonid="linkRow"] {
 	display: none;
 }

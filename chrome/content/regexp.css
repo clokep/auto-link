@@ -28,4 +28,5 @@ textbox {
 	/*border: 2px solid;*/
 	padding: 2px 2px 3px !important;
 	-moz-padding-start: 7px !important;
+	-moz-padding-end: 7px !important;
 }

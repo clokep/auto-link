@@ -63,6 +63,8 @@ function loadRules() {
 		// Should probably throw an error
 	}
 
+	let rulesList = document.getElementById("rules");
+
 	// Loop over each ruleset
 	for each (var rule in rules) {
 		rule.pattern = stringToRegex(rule.pattern);
@@ -70,9 +72,11 @@ function loadRules() {
 		rule.conversationName = stringToRegex(rule.conversationName);
 
 		let elt = document.createElement("richlistitem"); // Really its a ruleitem, but we want richlistitem's styles
-		document.getElementById("rules").appendChild(elt);
+		rulesList.appendChild(elt);
 		elt.build(rule, protos);
 	}
+
+	rulesList.selectedIndex = 0;
 }
 	
 // Reforms a regular expression from a string

@@ -43,8 +43,9 @@
 			<stylesheet src="chrome://autolink/content/regexp.css"/>
 		</resources>
 		<content>
-			<xul:stack xbl:inherits="flex" align="center">
-				<xul:label anonid="regexpBackground" class="monospace" style="-moz-appearance: textfield;"/>
+			<xul:stack xbl:inherits="flex" align="baseline">
+				<xul:label anonid="regexpBackground" class="monospace"
+						   style="-moz-appearance: textfield;"/>
 				<xul:textbox xbl:inherits="value=source" anonid="source"
 							 oninput="parse();" class="plain monospace"/>
 			</xul:stack>
@@ -65,10 +66,24 @@
 						  checked="true" collapsed="true" oncommand="parse()"/>
 		</content>
 		<implementation>
+			<field name="_regexpReplace"/>
+			<property name="regexpReplace">
+				<getter>
+					<![CDATA[
+						return this._regexpReplace;
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this._regexpReplace = val;
+						this.parse();
+					]]>
+				</setter>
+			</property>
 			<property name="source">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("source");
+						return document.getAnonymousElementByAttribute(this, "anonid", "source").value;
 					]]>
 				</getter>
 				<setter>
@@ -80,7 +95,7 @@
 			<property name="global">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("global");
+						return document.getAnonymousElementByAttribute(this, "anonid", "global").hasAttribute("checked");
 					]]>
 				</getter>
 				<setter>
@@ -92,7 +107,7 @@
 			<property name="ignoreCase">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("ignoreCase");
+						return document.getAnonymousElementByAttribute(this, "anonid", "ignoreCase").hasAttribute("checked");
 					]]>
 				</getter>
 				<setter>
@@ -104,7 +119,7 @@
 			<property name="multiline">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("multiline");
+						return document.getAnonymousElementByAttribute(this, "anonid", "multiline").hasAttribute("checked");
 					]]>
 				</getter>
 				<setter>
@@ -116,7 +131,7 @@
 			<property name="sticky">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("sticky");
+						return document.getAnonymousElementByAttribute(this, "anonid", "sticky").hasAttribute("checked");
 					]]>
 				</getter>
 				<setter>
@@ -125,10 +140,10 @@
 					]]>
 				</setter>
 			</property>
-			<property name="highlightSyntax">
+			<property name="syntax">
 				<getter>
 					<![CDATA[
-						return this.getAttribute("syntax");
+						return document.getAnonymousElementByAttribute(this, "anonid", "syntax").hasAttribute("checked");
 					]]>
 				</getter>
 				<setter>
@@ -149,7 +164,7 @@
 					]]>
 				</setter>
 			</property>
-			<property name="hideHighlightSyntaxFlag">
+			<property name="hideSyntaxFlag">
 				<getter>
 					<![CDATA[
 						return this.getAttribute("hideSyntaxFlag");
@@ -174,7 +189,6 @@
 				</getter>
 				<setter>
 					<![CDATA[
-						
 						this.source = val.source;
 						this.global = val.global;
 						this.ignoreCase = val.ignoreCase;
@@ -194,14 +208,6 @@
 			<method name="parse">
 				<body>
 					<![CDATA[
-						this.source = document.getAnonymousElementByAttribute(this, "anonid", "source").value;
-						this.global = document.getAnonymousElementByAttribute(this, "anonid", "global").hasAttribute("checked");
-						this.ignoreCase = document.getAnonymousElementByAttribute(this, "anonid", "ignoreCase").hasAttribute("checked");
-						this.multiline = document.getAnonymousElementByAttribute(this, "anonid", "multiline").hasAttribute("checked");
-						this.sticky = document.getAnonymousElementByAttribute(this, "anonid", "sticky").hasAttribute("checked");
-
-						this.syntax = document.getAnonymousElementByAttribute(this, "anonid", "syntax").hasAttribute("checked");
-					
 						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
 						function  HTMLParser(aHTMLString){
 							var parsedDOM = document.createElement('div');
@@ -225,6 +231,9 @@
 						// Append new children
 						for (var i = 0; i < doc.childNodes.length; i++)
 							regex_bg.appendChild(doc.childNodes[i]);
+						
+						for each (regexpReplace in this.regexpReplace)
+							regexpReplace.regexpSource = this.source;
 					]]>
 				</body>
 			</method>
@@ -648,7 +657,163 @@
 		<!-- content, property, method and event descriptions go here -->
 		<!-- the haystack to run against -->
 	</binding>
-	<binding id="replacestring">
-		<!-- content, property, method and event descriptions go here -->
+	<binding id="regexp-replace" extends="xul:hbox">
+		<resources>
+			<stylesheet src="chrome://autolink/content/regexp.css"/>
+		</resources>
+		<content>
+			<xul:stack xbl:inherits="flex" align="baseline">
+				<xul:label anonid="regexpReplaceBackground" class="monospace"
+						   style="-moz-appearance: textfield;"/>
+				<xul:textbox xbl:inherits="value" anonid="value"
+							 oninput="parse();" class="plain monospace"/>
+			</xul:stack>
+			<xul:checkbox anonid="syntax" label="Highlight Syntax"
+						  xbl:inherits="checked=syntax,collapsed=hideSyntaxFlag"
+						  checked="true" collapsed="true" oncommand="parse()"/>
+		</content>
+		<implementation>
+			<field name="_regexpSource"/>
+			<property name="regexpSource">
+				<getter>
+					<![CDATA[
+						return this._regexpSource;
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this._regexpSource = val;
+						this.parse();
+					]]>
+				</setter>
+			</property>
+			<property name="value">
+				<getter>
+					<![CDATA[
+						return document.getAnonymousElementByAttribute(this, "anonid", "value").value;
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("value", val);
+					]]>
+				</setter>
+			</property>
+			<property name="syntax">
+				<getter>
+					<![CDATA[
+						return document.getAnonymousElementByAttribute(this, "anonid", "syntax").hasAttribute("checked");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("syntax", val);
+					]]>
+				</setter>
+			</property>
+			<property name="hideSyntaxFlag">
+				<getter>
+					<![CDATA[
+						return this.getAttribute("hideSyntaxFlag");
+					]]>
+				</getter>
+				<setter>
+					<![CDATA[
+						this.setAttribute("hideSyntaxFlag", val);
+					]]>
+				</setter>
+			</property>
+			<constructor>
+				<![CDATA[
+					// Just highlight for now
+					this.parse();
+				]]>
+			</constructor>
+			<method name="parse">
+				<body>
+					<![CDATA[
+						if (!this.regexpSource || !this.syntax)
+							return;
+
+						// http://forums.mozillazine.org/viewtopic.php?p=8245775&sid=6f2be262d44949a486cab09103a77707#p8245775
+						function  HTMLParser(aHTMLString){
+							var parsedDOM = document.createElement('div');
+							parsedDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
+														.getService(Components.interfaces.nsIScriptableUnescapeHTML) 
+														.parseFragment(aHTMLString, false, null, parsedDOM));
+							return parsedDOM;
+						}
+
+						let bg = document.getAnonymousElementByAttribute(this, "anonid", "regexpReplaceBackground");
+						// Remove all current children (there should only be one)
+						while (bg.childNodes.length >= 1)
+							bg.removeChild(bg.firstChild);
+
+						// If we don't want syntax highlighting then don't do anything
+						if (!this.syntax)
+							return;
+							
+						// Count the number of capturing groups: ( )
+						let capturingGroups = 0;
+						for (var i = 0; i < (this.regexpSource.length - 1); i++)
+							if (this.regexpSource.charAt(i) == "(" && this.regexpSource.charAt(i + 1) != "?")
+								// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
+								capturingGroups++;
+							else if (this.regexpSource.charAt(i) == "\\") // If we're escaping then we don't care about the next char
+								i++; // Skip the next char
+
+						let doc = HTMLParser("<label class=\"regex\">" + this.highlightJsReplaceSyntax(this.value, capturingGroups) + "</label>")
+
+						// Append new children
+						for (var i = 0; i < doc.childNodes.length; i++)
+							bg.appendChild(doc.childNodes[i]);
+					]]>
+				</body>
+			</method>
+			<method name="highlightJsReplaceSyntax">
+				<parameter name="value"/>
+				<parameter name="groups"/>
+				<body>
+					<![CDATA[
+						// This relies on the following CSS for highlighting:
+						/*
+						.regex {font-family: Monospace;}
+						.regex .b, .regex .i, .regex .u {font-weight: normal; font-style: normal; text-decoration: none;}
+						.regex .b {background: #aad1f7;}
+						.regex .i {background: #f9ca69;}
+						.regex .i .b {background: #f7a700;}
+						.regex .i .u {background: #efba4a;}
+						.regex .b.g1 {background: #d2f854;}
+						.regex .b.g2 {background: #9ec70c;}
+						.regex .b.g3 {background: #ecc9f7;}
+						.regex .b.g4 {background: #54b70b;}
+						.regex .b.g5 {background: #b688cf;}
+						.regex .b.err {background: #ff4300;}
+						*/
+
+						function groupStr (str, depth) {
+							return '<label class="b g' + depth + '">' + str + '</label>';
+						};
+
+						// This will convert between "some string $1" to "some string " + matches[0]
+						return value.replace(/\$\$/gi, "<label class=\"b\">$$$$</label>")
+									.replace(/\$&/gi, "<label class=\"i\">$$&</label>")
+									.replace(/\$`/gi, "<label class=\"i b\">$$`</label>")
+									.replace(/\$'/gi, "<label class=\"i u\">$$'</label>")
+									.replace(/\$([1-9]\d?)/gi, function(str, p1, offset, s) { // XXX handles 1 - 99, which is full valid range for JS?
+										if (parseInt(p1) <= groups)
+											return groupStr("$" + p1, parseInt(p1) % 6);
+										else if (p1.length > groups.toString().length
+												 && parseInt(p1.slice(0, groups.toString().length)) < groups)
+											return (groupStr("$" + p1.slice(0, groups.toString().length),
+															parseInt(p1.slice(0, groups.toString().length)) % 6)
+													+ p1.slice(groups.toString().length));
+										return "<label class=\"b err\">$" + p1 + "</label>"; // Treat it as an error and return
+									})
+									.replace(/(\$[^\$&`'1-9])/gi, "<label class=\"b err\">$1</label>");
+					]]>
+				</body>
+			</method>
+		</implementation>
 	</binding>
 </bindings>

@@ -72,9 +72,11 @@
 				</xul:hbox>
 				<xul:hbox anonid="linkRow" align="baseline">
 					<xul:label crop="end" control="link" value="Link URL"/>
-					<xul:textbox anonid="link" xbl:inherits="value=link" flex="2"/>
+					<xul:regexp-replace anonid="link" xbl:inherits="value=link" flex="2"/>
+				</xul:hbox>
+				<xul:hbox anonid="linkRow" align="baseline">
 					<xul:label crop="end" control="title" value="Link Title"/>
-					<xul:textbox anonid="title" xbl:inherits="value=title" flex="1"/>
+					<xul:regexp-replace anonid="title" xbl:inherits="value=title" flex="1"/>
 				</xul:hbox>
 			</xul:vbox>
 		</content>
@@ -87,9 +89,14 @@
 						this.setAttribute("name", aRule.name);
 						document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
 						document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
-						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern
+						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern;
 						this.setAttribute("link", aRule.link);
 						this.setAttribute("title", aRule.title);
+						// Link regexp to its replace strings						
+						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexpReplace = [
+							document.getAnonymousElementByAttribute(this, "anonid", "link"),
+							document.getAnonymousElementByAttribute(this, "anonid", "title")
+						];
 
 						var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
 						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSepEnd");

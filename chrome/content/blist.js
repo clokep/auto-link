@@ -73,7 +73,7 @@ var autoLink = {
 
 					// Count the number of capturing groups: ( )
 					// We don't want non-capturing or look-aheads: (?: ), (?= ), (?! )
-					rule.capturingGroups = 0;
+					rule.capturingGroups = 0; // XXX move to utilities file?
 					for (var i = 0; i < (rule.pattern.source.length - 1); i++)
 						if (rule.pattern.source.charAt(i) == "(" && rule.pattern.source.charAt(i + 1) != "?")
 							rule.capturingGroups++;
@@ -108,8 +108,8 @@ var autoLink = {
 	
 	// This will convert between "some string $1" to "some string " + matches[0]
 	convertRegexMatch: function(aString, aMatchedString, arrMatches) {
-		return aString.replace(/\$&/gi, aMatchedString)
-					  .replace(/\$(\d+)/gi,
+		return aString.replace(/\$&/gi, aMatchedString) // XXX Should be able to handle $$, $` and $'
+					  .replace(/\$(([1-9]\d?)/gi, // XXX Handles 1 - 99, which is the full range for JS
 								(function(str, p1, offset, s) {
 									if (parseInt(p1) <= arrMatches.length)
 										return arrMatches[parseInt(p1) - 1];

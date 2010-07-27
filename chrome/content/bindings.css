@@ -1,6 +1,9 @@
 regexp {
 	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp');
 }
+regexp-replace {
+	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp-replace');
+}
 
 /* Overwrite richlistitem so we can steal its styles */
 richlistitem {
