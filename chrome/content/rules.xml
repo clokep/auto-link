@@ -39,8 +39,8 @@
    - ***** END LICENSE BLOCK ***** -->
 
 <bindings xmlns="http://www.mozilla.org/xbl"
-					xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-					xmlns:xbl="http://www.mozilla.org/xbl">
+		  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+		  xmlns:xbl="http://www.mozilla.org/xbl">
 
 	<binding id="ruleitem" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
 		<resources>
@@ -50,12 +50,12 @@
 			<xul:vbox flex="1">
 				<xul:hbox anonid="nameRow" align="baseline">
 					<xul:label crop="end" control="name" value="Rule Name"/>
-					<xul:textbox anonid="name" flex="1"/>
+					<xul:textbox anonid="name" xbl:inherits="value=name" flex="1"/>
 					<xul:button anonid="protocols" type="menu" label="Choose Protocols">
-						<xul:menupopup anonid="prplMenu" onpopupshowing="return doShowPopup(event);" onpopuphiding="return closePopup(event);">
-							<xul:menuitem anonid="prplAll" label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
-							<xul:menuseparator/>
-							<xul:menuseparator anonid="prplMenuSep2"/>
+						<xul:menupopup anonid="prplMenu" onpopupshowing="return showPopup(event);" onpopuphiding="return closePopup(event);">
+							<xul:menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+							<xul:menuseparator anonid="prplMenuSepStart"/>
+							<xul:menuseparator anonid="prplMenuSepEnd"/>
 							<xul:menuitem label="Close"/>
 						</xul:menupopup>
 					</xul:button>
@@ -84,6 +84,7 @@
 				<parameter name="aProtos"/>
 				<body>
 					<![CDATA[
+						this.setAttribute("name", aRule.name);
 						document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
 						document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
 						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern
@@ -91,11 +92,11 @@
 						this.setAttribute("title", aRule.title);
 
 						var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
-						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSep2");
+						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSepEnd");
 						aProtos.forEach(function(proto) {
 							let menuitem = document.createElement("menuitem");
 							menuitem.setAttribute("label", proto.name);
-							menuitem.setAttribute("id", proto.id);
+							menuitem.setAttribute("anonid", proto.id);
 							menuitem.setAttribute("type", "checkbox");
 							menuitem.setAttribute("closemenu", "none");
 							menuitem.setAttribute("class", "menuitem-iconic"); // XXX type=checkbox can't support images
@@ -114,6 +115,30 @@
 					]]>
 				</body>
 			</method>
+			<method name="save">
+				<body>
+					<![CDATA[
+						let rule = {};
+						rule.name = document.getAnonymousElementByAttribute(this, "anonid", "name").getAttribute("value");
+						rule.accountName = document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp.toString();
+						rule.conversationName = document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp.toString();
+						rule.pattern = document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp.toString();
+						rule.link = document.getAnonymousElementByAttribute(this, "anonid", "link").value;
+						rule.title = document.getAnonymousElementByAttribute(this, "anonid", "title").value;
+
+						let menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
+						let menuitems = menu.children;
+						rule.protocols = [];
+						for (var i = 0; i < menuitems.length; i++)
+							if (menuitems[i].tagName == "menuitem" && menuitems[i].hasAttribute("anonid")
+								&& menuitems[i].hasAttribute("checked"))
+								rule.protocols.push(menuitems[i].getAttribute("anonid"));
+
+						return rule;
+					]]>
+				</body>
+			</method>
+
 		</implementation>
 	</binding>
 </bindings>

@@ -81,10 +81,16 @@ function stringToRegex(str) {
 	return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
 }
 
+function saveAll() {
+	let richlist = document.getElementById("rules");
+	let ruleElements = richlist.children;
+	let rules = [];
+	for (var i = 0; i < ruleElements.length; i++)
+		rules.push(ruleElements[i].save());
 
-function doShowPopup(event) {
-}
-function closePopup(event) {
+	dump(JSON.stringify(rules));
+	
+	return true;
 }
 
 window.addEventListener("load",

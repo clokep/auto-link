@@ -1,4 +1,4 @@
- richlistitem:not([selected="true"]) regexp label[anonid="regexpBackground"],
- richlistitem:not([selected="true"]) hbox[anonid="linkRow"] {
-   display: none;
- }
+richlistitem:not([selected="true"]) regexp label[anonid="regexpBackground"],
+richlistitem:not([selected="true"]) hbox[anonid="linkRow"] {
+	display: none;
+}

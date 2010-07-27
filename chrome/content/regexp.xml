@@ -60,8 +60,7 @@
 			<xul:checkbox anonid="sticky" label="y"
 						  xbl:inherits="checked=sticky,collapsed=hideFlags"
 						  checked="false" tooltiptext="sticky"/>
-			<xul:checkbox label="Highlight Syntax"
-						  anonid="syntax"
+			<xul:checkbox anonid="syntax" label="Highlight Syntax"
 						  xbl:inherits="checked=syntax,collapsed=hideSyntaxFlag"
 						  checked="true" collapsed="true" oncommand="parse()"/>
 		</content>
@@ -175,12 +174,13 @@
 				</getter>
 				<setter>
 					<![CDATA[
+						
 						this.source = val.source;
 						this.global = val.global;
 						this.ignoreCase = val.ignoreCase;
 						this.multiline = val.multiline;
 						this.sticky = val.sticky;
-						
+
 						this.parse();
 					]]>
 				</setter>
@@ -206,8 +206,8 @@
 						function  HTMLParser(aHTMLString){
 							var parsedDOM = document.createElement('div');
 							parsedDOM.appendChild(Components.classes["@mozilla.org/feed-unescapehtml;1"] 
-														    .getService(Components.interfaces.nsIScriptableUnescapeHTML) 
-														    .parseFragment(aHTMLString, false, null, parsedDOM));
+														.getService(Components.interfaces.nsIScriptableUnescapeHTML) 
+														.parseFragment(aHTMLString, false, null, parsedDOM));
 							return parsedDOM;
 						}
 
