@@ -44,6 +44,8 @@
 		<em:version>0.4pre</em:version>
 		<em:type>2</em:type> <!-- Extension //-->
 
+    <em:bootstrap>true</em:bootstrap>
+
 		<!-- Front End MetaData //-->
 		<em:name>Auto Link</em:name>
 		<em:description>Converts a plain text pattern to hyperlinks of your choice.</em:description>
@@ -61,8 +63,8 @@
 			<Description>
 				<!-- Instantbird -->
 				<em:id>{33cb9019-c295-46dd-be21-8c4936574bee}</em:id>
-				<em:minVersion>0.2b2</em:minVersion>
-				<em:maxVersion>0.3a1pre</em:maxVersion>
+				<em:minVersion>1.1a1pre</em:minVersion>
+				<em:maxVersion>1.1</em:maxVersion>
 			</Description>
 		</em:targetApplication>
 	</Description>
