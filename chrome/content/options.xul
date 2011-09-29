@@ -43,106 +43,106 @@
 
 <dialog id="autoLink-dialog"
         title="Auto Link Options"
-		buttons="accept,cancel,help"
-		ondialogaccept="return saveAll();"
-		ondialogcancel="return true;"
-		ondialoghelp="/* Show panel */"
+    buttons="accept,cancel,help"
+    ondialogaccept="return saveAll();"
+    ondialogcancel="return true;"
+    ondialoghelp="/* Show panel */"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
-	<script type="application/javascript" src="chrome://autolink/content/options.js"/>
+  <script type="application/javascript" src="chrome://instantbird/content/utilities.js"/>
+  <script type="application/javascript" src="chrome://autolink/content/options.js"/>
 
-	<panel id="helpPanel" label="Help">
-		<label value="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
-		<hbox>
-			<label class="plain monospace">.</label>
-			<label>Any character except newline.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">\.</label>
-			<label>A period (and so on for
-				<label class="plain monospace">\*</label>, <label class="plain monospace">\(</label>, <label class="plain monospace">\\</label>, etc.)
-			</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">^</label>
-			<label>The start of the string.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">$</label>
-			<label>The end of the string.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">\d</label>,<label class="plain monospace">\w</label>,<label class="plain monospace">\s</label>
-			<label>A digit, word character <label class="plain monospace">[A-Za-z0-9_]</label>, or whitespace.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">\D</label>,<label class="plain monospace">\W</label>,<label class="plain monospace">\S</label>
-			<label>Anything except a digit, word character, or whitespace.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">[abc]</label>
-			<label>Character a, b, or c.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">[a-z]</label>
-			<label>a through z.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">[^abc]</label>
-			<label>Any character except a, b, or c.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">aa|bb</label>
-			<label>Either aa or bb.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">?</label>
-			<label>Zero or one of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">*</label>
-			<label>Zero or more of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">+</label>
-			<label>One or more of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">{<label class="plain em">n</label>}</label>
-			<label>Exactly <label class="plain em">n</label> of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">{<label class="plain em">n</label>,}</label>
-			<label><label class="plain em">n</label> or more of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">{<label class="plain em">m</label>,<label class="plain em">n</label>}</label>
-			<label>Between <label class="plain em">m</label> and <label class="plain em">n</label> of the preceding element.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">??</label>,<label class="plain monospace">*?</label>,<label class="plain monospace">+?</label>,<label class="plain monospace">{<label class="plain em">n</label>}?</label>, etc.
-			<label>Same as above, but as few times as possible.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">(</label><label class="plain em">expr</label><label class="plain monospace">)</label>
-			<label>Capture <label class="plain em">expr</label> for use with <label class="plain monospace">\1</label>, etc.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">(?:</label><label class="plain em">expr</label><label class="plain monospace">)</label>
-			<label>Non-capturing group.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">(?=</label><label class="plain em">expr</label><label class="plain monospace">)</label>
-			<label>Followed by <label class="plain em">expr</label>.</label>
-		</hbox>
-		<hbox>
-			<label class="plain monospace">(?!</label><label class="plain em">expr</label><label class="plain monospace">)</label>
-			<label>Not followed by <label class="plain em">expr</label>.</label>
-		</hbox>
-	</panel>
-	
-	<description value="Help!" popup="helpPanel"/>
+  <panel id="helpPanel" label="Help">
+    <label value="Mozilla's Near-complete reference" href="http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:RegExp#Special_characters_in_regular_expressions"  class="text-link" />
+    <hbox>
+      <label class="plain monospace">.</label>
+      <label>Any character except newline.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">\.</label>
+      <label>A period (and so on for
+        <label class="plain monospace">\*</label>, <label class="plain monospace">\(</label>, <label class="plain monospace">\\</label>, etc.)
+      </label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">^</label>
+      <label>The start of the string.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">$</label>
+      <label>The end of the string.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">\d</label>,<label class="plain monospace">\w</label>,<label class="plain monospace">\s</label>
+      <label>A digit, word character <label class="plain monospace">[A-Za-z0-9_]</label>, or whitespace.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">\D</label>,<label class="plain monospace">\W</label>,<label class="plain monospace">\S</label>
+      <label>Anything except a digit, word character, or whitespace.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">[abc]</label>
+      <label>Character a, b, or c.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">[a-z]</label>
+      <label>a through z.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">[^abc]</label>
+      <label>Any character except a, b, or c.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">aa|bb</label>
+      <label>Either aa or bb.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">?</label>
+      <label>Zero or one of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">*</label>
+      <label>Zero or more of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">+</label>
+      <label>One or more of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">{<label class="plain em">n</label>}</label>
+      <label>Exactly <label class="plain em">n</label> of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">{<label class="plain em">n</label>,}</label>
+      <label><label class="plain em">n</label> or more of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">{<label class="plain em">m</label>,<label class="plain em">n</label>}</label>
+      <label>Between <label class="plain em">m</label> and <label class="plain em">n</label> of the preceding element.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">??</label>,<label class="plain monospace">*?</label>,<label class="plain monospace">+?</label>,<label class="plain monospace">{<label class="plain em">n</label>}?</label>, etc.
+      <label>Same as above, but as few times as possible.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">(</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+      <label>Capture <label class="plain em">expr</label> for use with <label class="plain monospace">\1</label>, etc.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">(?:</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+      <label>Non-capturing group.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">(?=</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+      <label>Followed by <label class="plain em">expr</label>.</label>
+    </hbox>
+    <hbox>
+      <label class="plain monospace">(?!</label><label class="plain em">expr</label><label class="plain monospace">)</label>
+      <label>Not followed by <label class="plain em">expr</label>.</label>
+    </hbox>
+  </panel>
 
-	<richlistbox id="rules" flex="1" rows="3"/>
+  <description value="Help!" popup="helpPanel"/>
+
+  <richlistbox id="rules" flex="1" rows="3"/>
 </dialog>

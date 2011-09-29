@@ -39,113 +39,113 @@
    - ***** END LICENSE BLOCK ***** -->
 
 <bindings xmlns="http://www.mozilla.org/xbl"
-		  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-		  xmlns:xbl="http://www.mozilla.org/xbl">
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
 
-	<binding id="ruleitem" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
-		<resources>
-			<stylesheet src="chrome://autolink/content/rules.css"/>
-		</resources>
-		<content>
-			<xul:vbox flex="1">
-				<xul:hbox anonid="nameRow" align="baseline">
-					<xul:label crop="end" control="name" value="Rule Name"/>
-					<xul:textbox anonid="name" xbl:inherits="value=name" flex="1"/>
-					<xul:button anonid="protocols" type="menu" label="Choose Protocols">
-						<xul:menupopup anonid="prplMenu" onpopupshowing="return showPopup(event);" onpopuphiding="return closePopup(event);">
-							<xul:menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
-							<xul:menuseparator anonid="prplMenuSepStart"/>
-							<xul:menuseparator anonid="prplMenuSepEnd"/>
-							<xul:menuitem label="Close"/>
-						</xul:menupopup>
-					</xul:button>
-				</xul:hbox>
-				<xul:hbox anonid="miscRow" align="baseline">
-					<xul:label crop="end" control="accountName" value="Account Name"/>
-					<xul:regexp anonid="accountName" oncommand="copy('accountNameLabel');" hideFlags="true" highlightSyntax="false" flex="1"/>
-					<xul:label crop="end" control="conversationName" value="Conversation Name"/>
-					<xul:regexp anonid="conversationName" hideFlags="true" highlightSyntax="false" flex="1"/>
-				</xul:hbox>
-				<xul:hbox anonid="patternRow" align="baseline">
-					<xul:label crop="end" control="pattern" value="Pattern"/>
-					<xul:regexp anonid="pattern" global="true" flex="1"/>
-				</xul:hbox>
-				<xul:hbox anonid="linkRow" align="baseline">
-					<xul:label crop="end" control="link" value="Link URL"/>
-					<xul:regexp-replace anonid="link" xbl:inherits="value=link" flex="2"/>
-				</xul:hbox>
-				<xul:hbox anonid="linkRow" align="baseline">
-					<xul:label crop="end" control="title" value="Link Title"/>
-					<xul:regexp-replace anonid="title" xbl:inherits="value=title" flex="1"/>
-				</xul:hbox>
-			</xul:vbox>
-		</content>
-		<implementation>
-			<method name="build">
-				<parameter name="aRule"/>
-				<parameter name="aProtos"/>
-				<body>
-					<![CDATA[
-						this.setAttribute("name", aRule.name);
-						document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
-						document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
-						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern;
-						this.setAttribute("link", aRule.link);
-						this.setAttribute("title", aRule.title);
-						// Link regexp to its replace strings						
-						document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexpReplace = [
-							document.getAnonymousElementByAttribute(this, "anonid", "link"),
-							document.getAnonymousElementByAttribute(this, "anonid", "title")
-						];
+  <binding id="ruleitem" extends="chrome://global/content/bindings/richlistbox.xml#richlistitem">
+    <resources>
+      <stylesheet src="chrome://autolink/content/rules.css"/>
+    </resources>
+    <content>
+      <xul:vbox flex="1">
+        <xul:hbox anonid="nameRow" align="baseline">
+          <xul:label crop="end" control="name" value="Rule Name"/>
+          <xul:textbox anonid="name" xbl:inherits="value=name" flex="1"/>
+          <xul:button anonid="protocols" type="menu" label="Choose Protocols">
+            <xul:menupopup anonid="prplMenu" onpopupshowing="return showPopup(event);" onpopuphiding="return closePopup(event);">
+              <xul:menuitem label="All" type="checkbox" oncommand="/* Uncheck everything else */"/>
+              <xul:menuseparator anonid="prplMenuSepStart"/>
+              <xul:menuseparator anonid="prplMenuSepEnd"/>
+              <xul:menuitem label="Close"/>
+            </xul:menupopup>
+          </xul:button>
+        </xul:hbox>
+        <xul:hbox anonid="miscRow" align="baseline">
+          <xul:label crop="end" control="accountName" value="Account Name"/>
+          <xul:regexp anonid="accountName" oncommand="copy('accountNameLabel');" hideFlags="true" highlightSyntax="false" flex="1"/>
+          <xul:label crop="end" control="conversationName" value="Conversation Name"/>
+          <xul:regexp anonid="conversationName" hideFlags="true" highlightSyntax="false" flex="1"/>
+        </xul:hbox>
+        <xul:hbox anonid="patternRow" align="baseline">
+          <xul:label crop="end" control="pattern" value="Pattern"/>
+          <xul:regexp anonid="pattern" global="true" flex="1"/>
+        </xul:hbox>
+        <xul:hbox anonid="linkRow" align="baseline">
+          <xul:label crop="end" control="link" value="Link URL"/>
+          <xul:regexp-replace anonid="link" xbl:inherits="value=link" flex="2"/>
+        </xul:hbox>
+        <xul:hbox anonid="linkRow" align="baseline">
+          <xul:label crop="end" control="title" value="Link Title"/>
+          <xul:regexp-replace anonid="title" xbl:inherits="value=title" flex="1"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+    <implementation>
+      <method name="build">
+        <parameter name="aRule"/>
+        <parameter name="aProtos"/>
+        <body>
+          <![CDATA[
+            this.setAttribute("name", aRule.name);
+            document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp = aRule.accountName;
+            document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp = aRule.conversationName
+            document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp = aRule.pattern;
+            this.setAttribute("link", aRule.link);
+            this.setAttribute("title", aRule.title);
+            // Link regexp to its replace strings
+            document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexpReplace = [
+              document.getAnonymousElementByAttribute(this, "anonid", "link"),
+              document.getAnonymousElementByAttribute(this, "anonid", "title")
+            ];
 
-						var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
-						var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSepEnd");
-						aProtos.forEach(function(proto) {
-							let menuitem = document.createElement("menuitem");
-							menuitem.setAttribute("label", proto.name);
-							menuitem.setAttribute("anonid", proto.id);
-							menuitem.setAttribute("type", "checkbox");
-							menuitem.setAttribute("closemenu", "none");
-							menuitem.setAttribute("class", "menuitem-iconic"); // XXX type=checkbox can't support images
-							menuitem.setAttribute("image", proto.iconBaseURI + "icon32.png");
-							
-							if (aRule.protocols.some(function(protocol) {
-								return (proto.id.toLowerCase() == protocol.toLowerCase());
-							}))
-								menuitem.setAttribute("checked", "true");
+            var menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
+            var insertBefore = document.getAnonymousElementByAttribute(this, "anonid", "prplMenuSepEnd");
+            aProtos.forEach(function(proto) {
+              let menuitem = document.createElement("menuitem");
+              menuitem.setAttribute("label", proto.name);
+              menuitem.setAttribute("anonid", proto.id);
+              menuitem.setAttribute("type", "checkbox");
+              menuitem.setAttribute("closemenu", "none");
+              menuitem.setAttribute("class", "menuitem-iconic"); // XXX type=checkbox can't support images
+              menuitem.setAttribute("image", proto.iconBaseURI + "icon32.png");
 
-							menu.insertBefore(menuitem, insertBefore);
-						});
+              if (aRule.protocols.some(function(protocol) {
+                return (proto.id.toLowerCase() == protocol.toLowerCase());
+              }))
+                menuitem.setAttribute("checked", "true");
 
-						if (!aRule.protocols.length)
-							document.getAnonymousElementByAttribute(this, "anonid", "prplAll").setAttribute("checked", "true");
-					]]>
-				</body>
-			</method>
-			<method name="save">
-				<body>
-					<![CDATA[
-						let rule = {};
-						rule.name = document.getAnonymousElementByAttribute(this, "anonid", "name").value;
-						rule.accountName = document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp.toString();
-						rule.conversationName = document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp.toString();
-						rule.pattern = document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp.toString();
-						rule.link = document.getAnonymousElementByAttribute(this, "anonid", "link").value;
-						rule.title = document.getAnonymousElementByAttribute(this, "anonid", "title").value;
+              menu.insertBefore(menuitem, insertBefore);
+            });
 
-						let menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
-						let menuitems = menu.children;
-						rule.protocols = [];
-						for (var i = 0; i < menuitems.length; i++)
-							if (menuitems[i].tagName == "menuitem" && menuitems[i].hasAttribute("anonid")
-								&& menuitems[i].hasAttribute("checked"))
-								rule.protocols.push(menuitems[i].getAttribute("anonid"));
+            if (!aRule.protocols.length)
+              document.getAnonymousElementByAttribute(this, "anonid", "prplAll").setAttribute("checked", "true");
+          ]]>
+        </body>
+      </method>
+      <method name="save">
+        <body>
+          <![CDATA[
+            let rule = {};
+            rule.name = document.getAnonymousElementByAttribute(this, "anonid", "name").value;
+            rule.accountName = document.getAnonymousElementByAttribute(this, "anonid", "accountName").regexp.toString();
+            rule.conversationName = document.getAnonymousElementByAttribute(this, "anonid", "conversationName").regexp.toString();
+            rule.pattern = document.getAnonymousElementByAttribute(this, "anonid", "pattern").regexp.toString();
+            rule.link = document.getAnonymousElementByAttribute(this, "anonid", "link").value;
+            rule.title = document.getAnonymousElementByAttribute(this, "anonid", "title").value;
 
-						return rule;
-					]]>
-				</body>
-			</method>
+            let menu = document.getAnonymousElementByAttribute(this, "anonid", "prplMenu");
+            let menuitems = menu.children;
+            rule.protocols = [];
+            for (var i = 0; i < menuitems.length; i++)
+              if (menuitems[i].tagName == "menuitem" && menuitems[i].hasAttribute("anonid")
+                && menuitems[i].hasAttribute("checked"))
+                rule.protocols.push(menuitems[i].getAttribute("anonid"));
 
-		</implementation>
-	</binding>
+            return rule;
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
 </bindings>

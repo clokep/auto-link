@@ -6,7 +6,11 @@ R - Removed
 F - Fixed
 K - Known issue
 
-0.4		2010/07/xx	(Ib 0.2 - 0.3a1pre)
+0.5		2011/10/xx	(Ib 1.1pre - 1.1)
+A   Restartless
+F   Major code clean up
+
+0.4		Unreleased	(Ib 0.2 - 0.3a1pre)
 F	1	Links after the first one were shifted
 
 0.3.1	2010/07/11	(Ib 0.2b2 - 0.3a1pre)
@@ -14,7 +18,7 @@ F		Update compatible versions
 F		Update bugzilla.mozilla.org pattern
 
 0.3		2010/07/09	(Ib 0.2b2 - 0.2pre)
-F		Fixed incorrectly assuminge clokep as a username
+F		Fixed incorrectly assuming clokep as a username
 F		Fixed checking a protocols name instead of id
 
 0.3pre	2010/07/09	(Ib 0.2b2 - 0.2pre)

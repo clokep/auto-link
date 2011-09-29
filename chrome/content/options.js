@@ -34,75 +34,69 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+const {classes: Cc, interfaces: Ci, utils: Cu} = Components;
+
+Cu.import("resource:///modules/imServices.jsm");
+
 function dump(aMessage) {
-	var consoleService = Components.classes["@mozilla.org/consoleservice;1"]
-								   .getService(Components.interfaces.nsIConsoleService);
-	consoleService.logStringMessage("Auto-Link: " + aMessage);
+  Services.console.logStringMessage("Auto-Link: " + aMessage);
 }
 
 var protos = [];
 function loadSupportedProtocols() {
-	var pcs = Cc["@instantbird.org/purple/core;1"]
-				 .getService(Ci.purpleICoreService);
-
-	for (var proto in getIter(pcs.getProtocols())) {
-		protos.push(proto);
-	}
-	protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+  for (var proto in getIter(Services.core.getProtocols()))
+    protos.push(proto);
+  protos.sort(function(a, b) a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 }
 
 function loadRules() {
-	var prefs =	Cc["@mozilla.org/preferences-service;1"]
-					.getService(Ci.nsIPrefService)
-					.getBranch("extensions.autolink.");
-	let rules = [];
-	try {
-		rules = JSON.parse(prefs.getCharPref("rules"));
-	} catch(e) {
-		// Well, just do nothing.
-		// Should probably throw an error
-	}
+  var prefs =  Services.prefs.getBranch("extensions.autolink.");
+  let rules = [];
+  try {
+    rules = JSON.parse(prefs.getCharPref("rules"));
+  } catch(e) {
+    // Well, just do nothing.
+    // Should probably throw an error
+  }
 
-	let rulesList = document.getElementById("rules");
+  let rulesList = document.getElementById("rules");
 
-	// Loop over each ruleset
-	for each (var rule in rules) {
-		rule.pattern = stringToRegex(rule.pattern);
-		rule.accountName = stringToRegex(rule.accountName);
-		rule.conversationName = stringToRegex(rule.conversationName);
+  // Loop over each ruleset
+  for each (var rule in rules) {
+    rule.pattern = stringToRegex(rule.pattern);
+    rule.accountName = stringToRegex(rule.accountName);
+    rule.conversationName = stringToRegex(rule.conversationName);
 
-		let elt = document.createElement("richlistitem"); // Really its a ruleitem, but we want richlistitem's styles
-		rulesList.appendChild(elt);
-		elt.build(rule, protos);
-	}
+    let elt = document.createElement("richlistitem"); // Really its a ruleitem, but we want richlistitem's styles
+    rulesList.appendChild(elt);
+    elt.build(rule, protos);
+  }
 
-	rulesList.selectedIndex = 0;
+  rulesList.selectedIndex = 0;
 }
-	
+
 // Reforms a regular expression from a string
 function stringToRegex(str) {
-	let separator = str.lastIndexOf('/');
-	return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
+  let separator = str.lastIndexOf('/');
+  return (new RegExp(str.slice(1,separator), str.slice(separator + 1)));
 }
 
 function saveAll() {
-	let richlist = document.getElementById("rules");
-	let ruleElements = richlist.children;
-	let rules = [];
-	for (var i = 0; i < ruleElements.length; i++)
-		rules.push(ruleElements[i].save());
+  let richlist = document.getElementById("rules");
+  let ruleElements = richlist.children;
+  let rules = [];
+  for (var i = 0; i < ruleElements.length; i++)
+    rules.push(ruleElements[i].save());
 
-	var prefs =	Cc["@mozilla.org/preferences-service;1"]
-				  .getService(Ci.nsIPrefService)
-				  .getBranch("extensions.autolink.");
+  var prefs = Services.prefs.getBranch("extensions.autolink.");
 
-	prefs.setCharPref("rules", JSON.stringify(rules));
-	return true;
+  prefs.setCharPref("rules", JSON.stringify(rules));
+  return true;
 }
 
 window.addEventListener("load",
-						(function(e) {
-							loadSupportedProtocols();
-							loadRules();
-						}),
-						false);
+                        (function(e) {
+                          loadSupportedProtocols();
+                          loadRules();
+                        }),
+                        false);

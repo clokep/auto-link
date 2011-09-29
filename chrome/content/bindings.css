@@ -1,11 +1,11 @@
 regexp {
-	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp');
+  -moz-binding: url('chrome://autolink/content/regexp.xml#regexp');
 }
 regexp-replace {
-	-moz-binding: url('chrome://autolink/content/regexp.xml#regexp-replace');
+  -moz-binding: url('chrome://autolink/content/regexp.xml#regexp-replace');
 }
 
 /* Overwrite richlistitem so we can steal its styles */
 richlistitem {
-	-moz-binding: url('chrome://autolink/content/rules.xml#ruleitem');
+  -moz-binding: url('chrome://autolink/content/rules.xml#ruleitem');
 }

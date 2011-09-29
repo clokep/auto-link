@@ -35,37 +35,37 @@
  -
  - ***** END LICENSE BLOCK ***** -->
 
-<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
-	<Description about="urn:mozilla:install-manifest">
-		<!-- Extension Information //-->
-		<em:id>auto-link@patrick.cloke</em:id>
-		<em:version>0.4pre</em:version>
-		<em:type>2</em:type> <!-- Extension //-->
+  <Description about="urn:mozilla:install-manifest">
+    <!-- Extension Information //-->
+    <em:id>auto-link@patrick.cloke</em:id>
+    <em:version>0.5pre</em:version>
+    <em:type>2</em:type> <!-- Extension //-->
 
     <em:bootstrap>true</em:bootstrap>
 
-		<!-- Front End MetaData //-->
-		<em:name>Auto Link</em:name>
-		<em:description>Converts a plain text pattern to hyperlinks of your choice.</em:description>
-		<em:creator>Patrick Cloke</em:creator>
-		<em:developer>Benedikt P. (original Link Bugzilla extension)</em:developer>
-		<em:homepageURL>http://code.google.com/p/auto-link/</em:homepageURL>
+    <!-- Front End MetaData //-->
+    <em:name>Auto Link</em:name>
+    <em:description>Converts a plain text pattern to hyperlinks of your choice.</em:description>
+    <em:creator>Patrick Cloke</em:creator>
+    <em:developer>Benedikt P. (original Link Bugzilla extension)</em:developer>
+    <em:homepageURL>http://code.google.com/p/auto-link/</em:homepageURL>
 
-		<!-- Internal References //-->
-		<!--<em:aboutURL>chrome://autolink/content/about.xul</em:aboutURL>//-->
-		<!--<em:iconURL>chrome://autolink/content/thundershows.png</em:iconURL>//-->
-		<em:optionsURL>chrome://autolink/content/options.xul</em:optionsURL>
+    <!-- Internal References //-->
+    <!--<em:aboutURL>chrome://autolink/content/about.xul</em:aboutURL>//-->
+    <!--<em:iconURL>chrome://autolink/content/thundershows.png</em:iconURL>//-->
+    <em:optionsURL>chrome://autolink/content/options.xul</em:optionsURL>
 
-		<!-- Target Applications //-->
-		<em:targetApplication>
-			<Description>
-				<!-- Instantbird -->
-				<em:id>{33cb9019-c295-46dd-be21-8c4936574bee}</em:id>
-				<em:minVersion>1.1a1pre</em:minVersion>
-				<em:maxVersion>1.1</em:maxVersion>
-			</Description>
-		</em:targetApplication>
-	</Description>
+    <!-- Target Applications //-->
+    <em:targetApplication>
+      <Description>
+        <!-- Instantbird -->
+        <em:id>{33cb9019-c295-46dd-be21-8c4936574bee}</em:id>
+        <em:minVersion>1.1a1pre</em:minVersion>
+        <em:maxVersion>1.1</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+  </Description>
 </RDF>
