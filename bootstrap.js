@@ -46,28 +46,13 @@ const PREF_BRANCH = "extensions.autolink.";
 const PREFS = {
   rules: JSON.stringify([
     {
-      name: "Test",
-      pattern: /test (\d+)/gi.toString(),
-      link: "http://$1",
-      title: "TEST $1"
-    },
-    {
-      name: "Mozilla Bugzilla",
-      pattern: /bug[ #]*?(\d+)/gi.toString(),
-      link: "https://bugzilla.mozilla.org/show_bug.cgi?id=$1",
-      title: "Bug $1 @ bugzilla.mozilla.org",
-      protocols: ["prpl-irc"],
-      accountName: /.+/.toString(),
-      conversationName: /#(?!(instant|song)bird).+/i.toString() // Possibly remove this constraint and just run the other two first since they're more "specific"
-    },
-    {
       name: "Instantbird Bugzilla",
       pattern: /bug[ #]*?(\d+)/gi.toString(),
       link: "https://bugzilla.instantbird.org/show_bug.cgi?id=$1",
       title: "Bug $1 @ bugzilla.instantbird.org",
       protocols: ["prpl-irc"],
       accountName: /.+/.toString(),
-      conversationName: /#instantbird/i.toString()
+      conversationName: /#(instantbird|testib)/i.toString()
     },
     {
       name: "Songbird Bugzilla",
@@ -77,6 +62,15 @@ const PREFS = {
       protocols: ["prpl-irc"],
       accountName: /.+/.toString(),
       conversationName: /#songbird/i.toString()
+    },
+    {
+      name: "Mozilla Bugzilla",
+      pattern: /bug[ #]*?(\d+)/gi.toString(),
+      link: "https://bugzilla.mozilla.org/show_bug.cgi?id=$1",
+      title: "Bug $1 @ bugzilla.mozilla.org",
+      protocols: ["prpl-irc"],
+      accountName: /.+/.toString(),
+      conversationName: /#.+/i.toString() // Possibly remove this constraint and just run the other two first since they're more "specific"
     }
   ]).replace(/\\/g, "\\\\") };
 const EVENTS = ["conversation-loaded"];
@@ -154,7 +148,6 @@ function convertRegExpMatch(aMatchedString, aOffset, aStr, aRepString, aMatches)
       // submatch string, provided the first argument was a RegExp object.
       // Handles 1 - 99, which is the full range for JS
       let num = aRepString[i + 1];
-      Cu.reportError(num + aMatches.length);
       // If there are two digits, include both of them...
       if (/\d/.test(aRepString[i + 2])) {
         num += aRepString[i + 2];
@@ -236,11 +229,12 @@ function autoLink(aNode) {
 
   for each (let rule in rules) {
     // Check that the user/room names & protocol are valid
-    if ((this.account.protocol.id in rule.protocols ||
+    if ((rule.protocols.indexOf(this.account.protocol.id) != -1 ||
          !rule.protocols.length) &&
         rule.accountName.test(this.account.name) && // XXX Does this work if your account has an alias?
         rule.conversationName.test(this.name)) { // XXX Does this work if you have an alias for the buddy?
       // Add rule to current conversation.
+      Cu.reportError("HERE");
       results += applyRule(aNode, rule);
     }
   }
